@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>المتدبّرون · أصحاب هذه التدبّرات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/style.css?v=20260620d">
+</head>
+<body>
+<section class="frontis"><div class="hero wrap" style="padding:clamp(40px,6vw,66px) 0 clamp(28px,4vw,44px)">
+  <div class="kicker">أصحاب هذه التدبّرات</div>
+  <h1 style="font-size:clamp(34px,6vw,60px)">المتدبّرون</h1>
+  <p class="lede">ثلّةٌ من الأطبّاء والمهندسين والعلماء واللغويّين، كلٌّ يقرأ كلام الله بعدسته.
+    <span class="en">Doctors, engineers, scholars, linguists — each reading the same words through a different lens.</span></p>
+</div></section>
+
+<main class="sec wrap">
+  <div class="toolbar">
+    <div class="field"><label for="sort">ترتيب حسب</label>
+      <select id="sort"><option value="presentations">عدد التدبّرات</option><option value="pages_count">عدد الصفحات</option><option value="minutes">الدقائق</option><option value="surahs_count">السوَر</option></select></div>
+    <div class="count" id="count"></div>
+  </div>
+  <div class="grid cols-3" id="grid"></div>
+</main>
+
+<script src="./assets/app.js?v=20260620d"></script>
+<script>
+chrome('speakers');
+let SPK;
+const initial=n=>(n||'؟').trim()[0];
+function card(s){
+  return `<a class="card spk" href="./speaker.html?v=${encodeURIComponent(s.voice_code||s.name)}">
+    <div class="top"><div class="avatar">${esc(initial(s.full_name||s.name))}</div>
+      <div><div class="nm">${esc(s.full_name||s.name)}</div>
+        <div class="ro">${esc(s.role? s.role.split('؛')[0] : (s.profession||'متدبّر'))}</div></div></div>
+    <div class="figs">
+      <div class="fig"><span class="v">${s.presentations}</span><span class="k">تدبّر</span></div>
+      <div class="fig"><span class="v">${s.pages_count}</span><span class="k">صفحة</span></div>
+      <div class="fig"><span class="v">${s.surahs_count}</span><span class="k">سورة</span></div>
+      <div class="fig"><span class="v">${s.minutes}</span><span class="k">دقيقة</span></div>
+    </div>
+    <div class="pill-row">${s.t1?`<span class="chip t1">تدبّر ١ · ${s.t1}</span>`:''}${s.t2?`<span class="chip t2">تدبّر ٢ · ${s.t2}</span>`:''}${s.kunya?`<span class="chip">${esc(s.kunya)}</span>`:''}</div>
+  </a>`;
+}
+function render(){
+  const k=$('#sort').value;
+  const list=[...SPK].sort((a,b)=>b[k]-a[k]);
+  $('#count').innerHTML=`<b>${list.length}</b> متدبّر`;
+  $('#grid').innerHTML=list.map(card).join('');
+}
+(async()=>{ SPK=await T.load('speakers'); $('#sort').onchange=render; render(); })();
+</script>
+</body>
+</html>

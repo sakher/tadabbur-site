@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>متدبّر · تدبّر</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/style.css?v=20260620d">
+</head>
+<body>
+<section class="frontis"><div class="hero wrap" id="hero" style="padding:clamp(44px,6vw,72px) 0 clamp(30px,4vw,48px)">
+  <div class="skeleton" style="color:var(--cream-on-deep)">…</div></div></section>
+<main class="sec wrap" id="main"></main>
+
+<script src="./assets/app.js?v=20260620d"></script>
+<script>
+chrome('speakers');
+const key=qp('v');
+const initial=n=>(n||'؟').trim()[0];
+function ytLink(p){return p.youtube_id?`https://www.youtube.com/watch?v=${p.youtube_id}&t=${p.start_s||0}s`:null;}
+function monthBars(pres){
+  // group by year-month
+  const m={}; pres.forEach(p=>{if(p.date){const k=p.date.slice(0,7); m[k]=(m[k]||0)+1;}});
+  const keys=Object.keys(m).sort(); if(!keys.length)return'';
+  const mx=Math.max(...Object.values(m));
+  return `<div class="timeline" aria-hidden="true">${keys.map(k=>`<div class="bar" style="height:${8+90*m[k]/mx}%" title="${k}: ${m[k]}"></div>`).join('')}</div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink-soft);margin-top:4px"><span>${keys[0]}</span><span>${keys[keys.length-1]}</span></div>`;
+}
+(async()=>{
+  const all=await T.load('speakers');
+  const s=all.find(x=>x.voice_code===key)||all.find(x=>x.name===key);
+  if(!s){$('#hero').innerHTML='<h1>غير موجود</h1>';return;}
+  document.title=`${s.full_name||s.name} · تدبّر`;
+  $('#hero').innerHTML=`
+    <div style="display:flex;align-items:center;gap:20px;justify-content:center;flex-wrap:wrap">
+      <div class="avatar" style="width:78px;height:78px;font-size:34px">${esc(initial(s.full_name||s.name))}</div>
+      <div style="text-align:start">
+        <h1 style="font-size:clamp(30px,5vw,52px);color:#fff">${esc(s.full_name||s.name)}</h1>
+        <div style="color:var(--gilt-soft);font-size:16px;margin-top:4px">${[s.kunya,s.profession].filter(Boolean).map(esc).join(' · ')||'متدبّر'}</div>
+      </div></div>
+    ${s.role?`<p class="lede" style="margin-top:18px">${esc(s.role)}</p>`:''}
+    <div class="stats" style="margin-top:34px">
+      <div class="stat"><span class="n">${s.presentations}</span><span class="l">تدبّر</span></div>
+      <div class="stat"><span class="n">${s.pages_count}</span><span class="l">صفحة</span></div>
+      <div class="stat"><span class="n">${s.surahs_count}</span><span class="l">سورة</span></div>
+      <div class="stat"><span class="n">${s.minutes}</span><span class="l">دقيقة</span></div>
+      <div class="stat"><span class="n">${(s.minutes/Math.max(1,s.presentations)).toFixed(0)}</span><span class="l">متوسط الدقائق</span></div>
+    </div>
+    <div class="pg-nav" style="margin-top:24px"><a href="./speakers.html">→ كلّ المتدبّرين</a></div>`;
+
+  const presByPage=[...s.pres].sort((a,b)=>a.page-b.page);
+  $('#main').innerHTML=`
+    <div class="grid cols-2" style="align-items:start">
+      <div class="panel"><div class="panel-h"><span class="t">حضوره عبر الزمن</span>
+        <span class="sub" style="font-size:13px;color:var(--ink-soft)">${s.first_date?fmtDate(s.first_date):''} — ${s.last_date?fmtDate(s.last_date):''}</span></div>
+        <div class="panel-b">${monthBars(s.pres)}
+          <div class="pill-row" style="margin-top:16px">${s.t1?`<span class="chip t1">تدبّر ١ · ${s.t1} جلسة</span>`:''}${s.t2?`<span class="chip t2">تدبّر ٢ · ${s.t2} جلسة</span>`:''}</div></div></div>
+      <div class="panel"><div class="panel-h"><span class="t">السوَر التي تدبّرها</span><span class="sub" style="font-size:13px;color:var(--ink-soft)">${s.surahs_count} سورة</span></div>
+        <div class="panel-b"><div class="pill-row">${s.surahs.map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</div></div></div>
+    </div>
+    <div class="panel" style="margin-top:22px"><div class="panel-h"><span class="t">كلّ تدبّراته</span>
+       <span class="sub" style="font-size:13px;color:var(--ink-soft)">${s.presentations} صفحة — مرتّبة حسب المصحف</span></div>
+      <div class="panel-b" style="padding:0">
+        ${presByPage.map(p=>`<div class="res" style="border-bottom:1px solid var(--line)">
+          <a class="tag${p.series==='T2'?' s':''}" href="./page.html?p=${p.page}">صفحة ${p.page}</a>
+          <span style="flex:1"><a href="./page.html?p=${p.page}" style="font-family:var(--f-display);font-size:17px;color:var(--ink)">${esc(p.surah)}</a>
+            <span class="sub">· ${p.series} · ${p.date?fmtDate(p.date):''}</span></span>
+          ${ytLink(p)?`<a class="mono" style="font-size:13px" href="${ytLink(p)}" target="_blank" rel="noopener">▶ ${esc(p.start||'')}</a>`:''}
+        </div>`).join('')}
+      </div></div>`;
+})();
+</script>
+</body>
+</html>

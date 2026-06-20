@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>إحصاءات التدبّر · توزيعات الطول والكلمات والموضع</title>
+<meta name="description" content="توزيع طول كل تدبّر وعدد كلماته وموضعه داخل التسجيل، عبر السلسلتين، مع الشواذّ موصولةً بصفحاتها.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/style.css?v=20260620d">
+<style>
+.statpage .dim{padding:clamp(26px,4vw,40px) 0;border-top:1px solid var(--line)}
+.statpage .dhead{display:flex;align-items:baseline;gap:13px;margin-bottom:4px}
+.statpage .dnum{font-family:var(--f-display);font-size:38px;color:var(--gilt);line-height:1;opacity:.5}
+.statpage .dhead h2{font-family:var(--f-display);font-size:clamp(23px,3.4vw,31px);margin:0}
+.statpage .dhead .en{font-family:var(--f-mono);font-size:12px;color:var(--ink-soft);letter-spacing:.04em}
+.statpage .dsub{color:var(--ink-soft);font-size:14.5px;margin:0 0 20px;max-width:660px}
+.summ{display:flex;flex-direction:column;gap:7px;margin-bottom:22px}
+.srow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13.5px}
+.sdot{width:11px;height:11px;border-radius:50%;flex:none}
+.sdot.t1{background:var(--green)} .sdot.t2{background:var(--gilt)}
+.srow>b{font-family:var(--f-mono);min-width:24px}
+.metrics{display:flex;flex-wrap:wrap}
+.metric{padding:1px 14px;border-inline-start:1px solid var(--line)}
+.metric:first-child{border:0;padding-inline-start:0}
+.metric .ml{font-size:11px;color:var(--ink-soft);display:block}
+.metric .mv{font-family:var(--f-mono);font-size:14.5px;font-weight:500}
+.srow .nn{margin-inline-start:auto;font-family:var(--f-mono);font-size:12px;color:var(--ink-soft)}
+.chartcard{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px 16px 10px;box-shadow:var(--shadow)}
+.chart{direction:ltr;position:relative;height:160px;display:flex;align-items:flex-end;gap:2px;padding-top:16px;border-bottom:1.5px solid var(--line)}
+.bin{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:3px;height:100%}
+.bar{width:42%;border-radius:3px 3px 0 0;min-height:1px;transition:height .8s cubic-bezier(.2,.7,.3,1)}
+.bar.t1{background:linear-gradient(180deg,#2a8a72,#1A6B58)}
+.bar.t2{background:linear-gradient(180deg,#c2a05a,#A87C2C)}
+.xaxis{direction:ltr;display:flex;gap:2px;margin-top:5px}
+.xt{flex:1;text-align:center;font-family:var(--f-mono);font-size:10px;color:var(--ink-soft)}
+.mean{position:absolute;top:0;bottom:0;width:0;border-inline-start:1.5px dashed}
+.mean .lbl{font-family:var(--f-mono);font-size:9.5px;padding:1px 4px;border-radius:4px;color:#fff;transform:translateX(-50%);white-space:nowrap;position:absolute}
+.mean.t1{border-color:#2a8a72} .mean.t2{border-color:#b98e3f}
+.mean.t1 .lbl{background:var(--green);top:0} .mean.t2 .lbl{background:var(--gilt);bottom:0}
+.clegend{direction:ltr;display:flex;gap:18px;justify-content:center;margin-top:11px;font-size:12px;color:var(--ink-soft)}
+.clegend i{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-inline-end:5px}
+.olabel{font-size:12px;font-weight:600;color:var(--ink-soft);margin:20px 0 9px;font-family:var(--f-mono);letter-spacing:.05em;text-transform:uppercase}
+.ochips{display:flex;flex-wrap:wrap;gap:8px}
+.ochip{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 7px;font-size:12.5px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .15s}
+.ochip:hover{border-color:var(--gilt);transform:translateY(-1px)}
+.ochip .pg{font-family:var(--f-mono);font-weight:600;background:var(--green);color:#fff;border-radius:999px;padding:2px 9px;font-size:11px}
+.ochip .pg.t2{background:var(--gilt)}
+.ochip .val{font-family:var(--f-mono);font-weight:600}
+.ochip .who{color:var(--ink-soft)}
+.ochip .z{font-family:var(--f-mono);font-size:10.5px;color:#a8472f}
+.ochip.muted{opacity:.6}
+.xnote{background:linear-gradient(180deg,#fffdf6,#fff);border:1px solid var(--line);border-inline-start:3px solid var(--gilt);border-radius:var(--r);padding:18px 22px;font-size:14.5px;color:#3a4435;margin-top:8px}
+.xnote b{color:var(--ink)} .xnote a{font-weight:600}
+.xnote .mono{font-family:var(--f-mono);font-size:12.5px;background:var(--vellum-2);border-radius:5px;padding:1px 6px;text-decoration:none}
+</style>
+</head>
+<body>
+<section class="frontis"><div class="hero wrap" style="padding:clamp(40px,6vw,68px) 0 clamp(24px,4vw,38px)">
+  <div class="kicker">تشريح البيانات</div>
+  <h1 style="font-size:clamp(32px,6vw,54px)">ثلاثة مقاييس لكلِّ تدبّر</h1>
+  <p class="lede">طولُ كلِّ تدبّرٍ بالدقائق، وعددُ كلماته، وموضعُه النسبيّ داخل تسجيل الجلسة — موزَّعةً على
+    السلسلتَين، بحدودها ومتوسّطاتها وشواذّها. كلُّ شاذٍّ موصولٌ بصفحته.
+    <span class="en">837 presentations · length · word-count · position — every outlier links to its page.</span></p>
+  <div class="stats" id="herofigs"></div>
+</div></section>
+
+<main class="sec wrap statpage" id="dims">
+  <div class="skeleton" style="padding:40px;text-align:center;color:var(--ink-soft)">…يُحمّل التحليل…</div>
+</main>
+
+<script src="./assets/app.js?v=20260620d"></script>
+<script>
+chrome('stats');
+const arnum = s => String(s).replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+const fnum = (v,d)=>arnum(Number(v).toFixed(d));
+const confTag={high:'',medium:'·مبدئيّ',substitute:'·نائب','manual-handoff':'·موثّق يدويًا',uncertain:'·غير مؤكّد',special:'·خاصّة','unnamed-voice':'·غير مُسمّى',low:'·منخفض'};
+const DIMS=[
+ {key:'len', num:'١', ar:'طولُ التدبّر', en:'AUDIO LENGTH · minutes', lo:0, hi:24, dec:1,
+  sub:'مدّةُ تدبّر الصفحة الواحدة بالدقائق. الأقصرُ إيجازُ مُتدبّرٍ مُقِلّ، والأطولُ غالبًا دمجُ نقاشٍ أو سُنّةٍ مع الصفحة.',
+  xfmt:e=>arnum(e), vfmt:v=>fnum(v,1)+'د'},
+ {key:'words', num:'٢', ar:'عددُ الكلمات', en:'WORD COUNT', lo:0, hi:2750, dec:0,
+  sub:'عددُ كلمات النصّ المُفرَّغ لكلِّ تدبّر — مؤشِّرٌ على الإسهاب والإيجاز (للصفحات المُفرَّغة فقط).',
+  xfmt:e=>e>=1000?fnum(e/1000,1)+'كَ':arnum(e), vfmt:v=>arnum(Math.round(v))+'ك'},
+ {key:'pos', num:'٣', ar:'الموضعُ النسبيّ في الفيديو', en:'RELATIVE POSITION IN VIDEO', lo:0, hi:1, dec:2,
+  sub:'أين يبدأ التدبّر داخل التسجيل (بدايةُ التدبّر ÷ مدّة الفيديو): ٠٪ أوّلُه، ١٠٠٪ آخرُه.',
+  xfmt:e=>arnum(Math.round(e*100))+'٪', vfmt:v=>arnum(Math.round(v*100))+'٪'},
+];
+
+function summ(D,dim){
+  const row=(ser,cls)=>{const s=D[dim.key].summary[ser]; if(!s) return '';
+    const M=(l,v)=>`<div class="metric"><span class="ml">${l}</span><span class="mv">${fnum(v,dim.dec)}</span></div>`;
+    return `<div class="srow"><span class="sdot ${cls}"></span><b>${ser==='T1'?'ت١':'ت٢'}</b>
+      <div class="metrics">${M('الأدنى',s.mn)}${M('المتوسّط',s.mean)}${M('الوسيط',s.med)}${M('الأعلى',s.mx)}${M('±الانحراف',s.sd)}</div>
+      <span class="nn">n=${arnum(s.n)}</span></div>`;};
+  return `<div class="summ">${row('T1','t1')}${row('T2','t2')}</div>`;
+}
+function chart(D,dim){
+  const h1=D[dim.key].hist.T1, h2=D[dim.key].hist.T2;
+  const n1=D[dim.key].summary.T1.n, n2=D[dim.key].summary.T2.n;
+  const p1=h1.counts.map(c=>c/n1*100), p2=h2.counts.map(c=>c/n2*100);
+  const mx=Math.max(...p1,...p2)||1;
+  const bins=h1.counts.map((_,i)=>`<div class="bin">
+     <div class="bar t1" style="height:${p1[i]/mx*100}%" title="ت١: ${arnum(h1.counts[i])} (${fnum(p1[i],0)}٪)"></div>
+     <div class="bar t2" style="height:${p2[i]/mx*100}%" title="ت٢: ${arnum(h2.counts[i])} (${fnum(p2[i],0)}٪)"></div></div>`).join('');
+  const mpos=v=>(v-dim.lo)/(dim.hi-dim.lo)*100;
+  const m1=D[dim.key].summary.T1.mean, m2=D[dim.key].summary.T2.mean;
+  const mean1=`<div class="mean t1" style="left:${mpos(m1)}%"><span class="lbl">μ ${fnum(m1,dim.dec)}</span></div>`;
+  const mean2=`<div class="mean t2" style="left:${mpos(m2)}%"><span class="lbl">μ ${fnum(m2,dim.dec)}</span></div>`;
+  const xl=h1.edges.slice(0,-1).map((e,i)=>`<div class="xt">${i%2===0?dim.xfmt(e):''}</div>`).join('');
+  return `<div class="chartcard"><div class="chart">${bins}${mean1}${mean2}</div>
+    <div class="xaxis">${xl}</div>
+    <div class="clegend"><span><i style="background:#1A6B58"></i>السلسلة الأولى</span>
+      <span><i style="background:#A87C2C"></i>السلسلة الثانية</span><span>μ = المتوسّط</span></div></div>`;
+}
+function outliers(D,dim){
+  const chip=o=>{const muted=['uncertain','special','low','unnamed-voice'].includes(o.conf)?' muted':'';
+    return `<a class="ochip${muted}" href="./page.html?p=${o.page}">
+      <span class="pg ${o.ser==='T2'?'t2':''}">${arnum(o.page)}</span>
+      <span class="val">${dim.vfmt(o.v)}</span>
+      <span class="who">${o.pres?esc(o.pres):'—'}${confTag[o.conf]||''}</span>
+      <span class="z">z${o.z>0?'+':''}${arnum(o.z)}</span></a>`;};
+  const os=D[dim.key].outliers, lo=os.filter(o=>o.z<0), hi=os.filter(o=>o.z>0);
+  let h='';
+  if(lo.length) h+=`<div class="olabel">الأقصر / الأصغر — ${arnum(lo.length)}</div><div class="ochips">${lo.map(chip).join('')}</div>`;
+  if(hi.length) h+=`<div class="olabel">الأطول / الأكبر — ${arnum(hi.length)}</div><div class="ochips">${hi.map(chip).join('')}</div>`;
+  return h;
+}
+(async()=>{
+  const D=await T.load('stats');
+  document.getElementById('herofigs').innerHTML=[
+   ['٨٣٧','تدبّرٌ مقيس'],
+   [arnum(D.len.summary.T1.mean)+'–'+arnum(D.len.summary.T2.mean),'متوسّط الدقائق'],
+   ['~'+arnum(1100),'متوسّط الكلمات'],
+   ['٣٠٪','الموضع الوسطيّ'],
+  ].map(([n,l])=>`<div class="stat"><span class="n">${n}</span><span class="l">${l}</span></div>`).join('');
+
+  document.getElementById('dims').innerHTML = DIMS.map(dim=>`<section class="dim">
+     <div class="dhead"><span class="dnum">${dim.num}</span><h2>${dim.ar}</h2><span class="en">${dim.en}</span></div>
+     <p class="dsub">${dim.sub}</p>
+     ${summ(D,dim)}${chart(D,dim)}${outliers(D,dim)}
+   </section>`).join('') + crossNote(D);
+
+  function crossNote(D){
+    const ov=D.overlap_len_words.map(o=>`<a class="mono" href="./page.html?p=${o.page}">${arnum(o.page)}·${o.ser==='T1'?'ت١':'ت٢'}</a>`).join(' · ');
+    return `<section class="dim"><div class="dhead"><span class="dnum">✦</span><h2>قراءةٌ في الأرقام</h2></div>
+      <div class="xnote"><b>تقاطعٌ يؤكّد سلامة البيانات:</b> الصفحاتُ الشاذّةُ في <b>الطول</b> هي نفسُها
+      الشاذّةُ في <b>عدد الكلمات</b> (${ov}) — فالطويلُ زمنًا طويلٌ كلماتٍ فعلًا، ولا خلل في الاستخراج.
+      أطولُها <a href="./page.html?p=255">٢٥٥</a> (وائل حمدوش، ٢٣ دقيقة) و<a href="./page.html?p=97">٩٧</a>
+      (عمرو) هما جلستان دُمج فيهما شرحُ الحديث/المداخلات مع الصفحة — ولذا عُلِّمتا <b>«غير مؤكّد»</b>.
+      وأمّا شواذُّ <b>الموضع</b> فكلُّها متأخّرة، وأغلبُها <b>ياسر صابوني</b> و<b>محمود صابوني</b>،
+      وهما يَختمان الجلسة بالتلخيص — فموضعُهما المتأخّر طبيعيٌّ لا خطأ.</div></section>`;
+  }
+})();
+</script>
+</body>
+</html>

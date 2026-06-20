@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مصحف التدبّر · بحث بالسورة والجزء والصفحة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/style.css?v=20260620d">
+</head>
+<body>
+<section class="frontis"><div class="hero wrap" style="padding:clamp(40px,6vw,64px) 0 clamp(28px,4vw,40px)">
+  <div class="kicker">المصحف · ٦٠٤ صفحات · ١١٤ سورة · ٣٠ جزء</div>
+  <h1 style="font-size:clamp(34px,6vw,60px)">مصحف التدبّر</h1>
+  <p class="lede">تصفّح كاملَ المصحف. كلُّ مربّعٍ صفحة — انقرها لتفتح تدبّرها.
+    <span class="en">The whole mushaf — every tile is a page; open it for its reflection.</span></p>
+  <div class="tableau-wrap" style="margin-top:34px"><div class="tableau" id="tableau"></div>
+    <div class="legend">
+      <span><i class="tile both" style="position:static;width:13px;height:13px"></i> تدبّر ١ و ٢</span>
+      <span><i class="tile t1" style="position:static;width:13px;height:13px"></i> تدبّر ١</span>
+      <span><i class="tile miss" style="position:static;width:13px;height:13px"></i> بانتظار التوثيق</span>
+    </div></div>
+</div></section>
+
+<main class="sec wrap">
+  <div class="toolbar">
+    <div class="field"><label for="fs">السورة</label>
+      <select id="fs"><option value="">كلّ السوَر</option></select></div>
+    <div class="field"><label for="fj">الجزء</label>
+      <select id="fj"><option value="">كلّ الأجزاء</option></select></div>
+    <div class="field"><label for="fp">اذهب إلى صفحة</label>
+      <input class="inp" id="fp" type="number" min="1" max="604" placeholder="١–٦٠٤" style="min-width:120px"></div>
+    <div class="field"><label for="fv">يحوي تسجيلًا</label>
+      <select id="fv"><option value="">الكلّ</option><option value="both">تدبّر ١ و ٢</option><option value="t2">له تدبّر ٢</option><option value="miss">غير موثّق</option></select></div>
+    <div class="count" id="count"></div>
+  </div>
+  <div class="grid cols-3" id="list"></div>
+</main>
+
+<script src="./assets/app.js?v=20260620d"></script>
+<script>
+chrome('quran');
+let PAGES, META;
+function row(p){
+  const extra=p.surahs_extra&&p.surahs_extra.length?` ، ${p.surahs_extra.map(s=>s.ar).join('، ')}`:'';
+  const badges=`${p.t1?'<span class="chip t1">تدبّر ١</span>':''}${p.t2?'<span class="chip t2">تدبّر ٢</span>':''}${(!p.t1&&!p.t2)?'<span class="chip">غير موثّق</span>':''}`;
+  const pres=[p.t1_pres,p.t2_pres].filter(Boolean);
+  return `<a class="card" href="./page.html?p=${p.page}" style="display:flex;flex-direction:column;gap:8px">
+    <div style="display:flex;align-items:baseline;justify-content:space-between">
+      <span class="mono" style="font-size:13px;color:var(--gilt)">صفحة ${p.page}</span>
+      <span class="mono" style="font-size:12px;color:var(--ink-soft)">جزء ${p.juz}</span></div>
+    <div class="amiri" style="font-size:22px;font-weight:700;color:var(--ink)">${esc(p.surah.ar)}${esc(extra)}</div>
+    <div style="font-size:12.5px;color:var(--ink-soft)">${esc(p.surah.en)}</div>
+    ${pres.length?`<div style="font-size:13px;color:var(--ink-soft)">${pres.map(esc).join(' · ')}</div>`:''}
+    <div class="pill-row" style="margin-top:auto">${badges}</div></a>`;
+}
+function apply(){
+  const s=$('#fs').value, j=$('#fj').value, v=$('#fv').value;
+  let list=PAGES;
+  if(s){const su=META.surahs[+s-1]; list=list.filter(p=>p.page>=su.page_start&&p.page<=su.page_end);}
+  if(j){const ju=META.juz[+j-1]; list=list.filter(p=>p.page>=ju.page_start&&p.page<=ju.page_end);}
+  if(v==='both')list=list.filter(p=>p.t1&&p.t2); else if(v==='t2')list=list.filter(p=>p.t2); else if(v==='miss')list=list.filter(p=>!p.t1&&!p.t2);
+  $('#count').innerHTML=`<b>${list.length}</b> صفحة`;
+  $('#list').innerHTML=list.length?list.map(row).join(''):`<div class="empty" style="grid-column:1/-1">لا صفحات بهذا المرشّح.</div>`;
+}
+(async()=>{
+  [PAGES,META]=await Promise.all([T.load('pages'),T.load('meta')]);
+  renderTableau($('#tableau'),PAGES,META.surahs,{});
+  $('#fs').innerHTML+=META.surahs.map(s=>`<option value="${s.num}">${s.num}. ${esc(s.ar)} — ${esc(s.en)}</option>`).join('');
+  $('#fj').innerHTML+=META.juz.map(j=>`<option value="${j.num}">الجزء ${j.num} (ص ${j.page_start}–${j.page_end})</option>`).join('');
+  ['fs','fj','fv'].forEach(id=>$('#'+id).onchange=apply);
+  $('#fp').onkeydown=e=>{if(e.key==='Enter'){const n=+e.target.value;if(n>=1&&n<=604)location.href='./page.html?p='+n;}};
+  // deep link ?surah= / ?juz=
+  const su=qp('surah'),ju=qp('juz');
+  if(su){$('#fs').value=su;} if(ju){$('#fj').value=ju;}
+  apply();
+})();
+</script>
+</body>
+</html>

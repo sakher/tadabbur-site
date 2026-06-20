@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>صفحة · تدبّر</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/style.css?v=20260620d">
+</head>
+<body>
+<section class="frontis">
+  <div class="pg-hero wrap" id="pghero"><div class="skeleton" style="color:var(--cream-on-deep)">…</div></div>
+</section>
+<main class="sec wrap" id="main"></main>
+
+<script src="./assets/app.js?v=20260620d"></script>
+<script>
+chrome('quran');
+const n=Math.max(1,Math.min(604,+qp('p')||1));
+function ytEmbed(b){ // lazy: placeholder -> iframe on click
+  if(!b||!b.youtube_id) return `<div class="empty" style="padding:30px">لا يوجد تسجيلٌ لهذه الصفحة في هذه السلسلة.</div>`;
+  const url=`https://www.youtube.com/embed/${b.youtube_id}?start=${b.start_s||0}&rel=0`;
+  return `<div class="embed" data-src="${url}">
+    <div class="embed-ph" role="button" tabindex="0" aria-label="تشغيل التدبّر">
+      <div><div class="play">▶</div><div class="who">${esc(b.presenter||'')}</div>
+      <div class="tm">${esc(b.start||'0:00')} → ${esc(b.end||'')}</div></div>
+    </div></div>`;
+}
+function panel(title,sub,b,uid){
+  if(!b) return `<div class="panel"><div class="panel-h"><span class="t">${title}</span><span class="sub" style="color:var(--ink-soft);font-size:13px">${sub}</span></div>
+    <div class="panel-b"><div class="empty">لم تُسجَّل هذه الصفحة في ${title}.</div></div></div>`;
+  const conf=b.confidence||'';
+  const txt=b.text? `<div class="tadabbur-txt" id="txt-${uid}">${esc(b.text)}</div>
+     <button class="txt-toggle" data-t="txt-${uid}">عرض النصّ كاملًا ↓</button>`
+     : `<div class="empty" style="padding:18px">نصّ التدبّر غير متوفّر.</div>`;
+  const watch = b.youtube_id ? `https://www.youtube.com/watch?v=${b.youtube_id}&t=${b.start_s||0}s` : null;
+  return `<div class="panel"><div class="panel-h"><span class="t">${title}</span>
+      <span class="sub" style="color:var(--ink-soft);font-size:13px">${sub}</span></div>
+    <div class="panel-b">
+      ${ytEmbed(b)}
+      <div class="byline"><b>${esc(b.presenter||'—')}</b>
+        ${b.date?`<span>· ${fmtDate(b.date)}</span>`:''}
+        ${b.session_number?`<span>· جلسة ${b.session_number}</span>`:''}
+        ${conf?`<span class="conf ${conf}">${conf==='high'?'مؤكّد':conf==='substitute'?'نائب':conf==='manual-handoff'?'موثّق يدويًا':'مبدئيّ'}</span>`:''}
+        ${watch?`<a class="mono yt-link" href="${watch}" target="_blank" rel="noopener" style="margin-inline-start:auto;color:var(--green);font-weight:600">▶ يوتيوب · ${esc(b.start||'0:00')}</a>`:''}</div>
+      ${txt}
+    </div></div>`;
+}
+function quranPanel(d){
+  if(d.quran && d.quran.verses && d.quran.verses.length){
+    const vs=d.quran.verses.map(v=>{
+      const a=v.k.split(':')[1];
+      return `${esc(v.ar)} <span class="marker">۝${toArabicNum(a)}</span>`;
+    }).join(' ');
+    const tr=d.quran.verses.filter(v=>v.en).map(v=>`<span class="ay-en"><b>${toArabicNum(v.k.split(':')[1])}</b> ${esc(v.en)}</span>`).join('');
+    const tf=d.quran.verses.filter(v=>v.tafsir).map(v=>`<div class="ay-tf"><b>${esc(v.k)}</b> ${esc(v.tafsir)}</div>`).join('');
+    return `<div class="panel"><div class="panel-h"><span class="t">${esc(d.quran.surah_ar||'')}</span>
+        <a class="sub" style="font-size:13px" href="${d.quran_com}" target="_blank" rel="noopener">على quran.com ↗</a></div>
+      <div class="panel-b">
+        <div class="qverse">${vs}</div>
+        ${tr?`<details class="qsec" open><summary>الترجمة — Abdel Haleem</summary><div class="qtrans">${tr}</div></details>`:''}
+        ${tf?`<details class="qsec"><summary>التفسير الميسر</summary><div class="qtaf">${tf}</div></details>`:''}
+      </div></div>`;
+  }
+  const s=d.surahs.map(x=>x.ar).join(' · ');
+  return `<div class="panel"><div class="panel-h"><span class="t">${esc(s)}</span></div>
+    <div class="panel-b"><p class="pill-row"><a class="chip t1" href="${d.quran_com}" target="_blank" rel="noopener">quran.com · صفحة ${d.page} ↗</a></p></div></div>`;
+}
+function toArabicNum(s){return String(s).replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
+
+(async()=>{
+  const d=await T.page(n);
+  document.title=`صفحة ${n} · ${d?d.surahs[0].ar:''} · تدبّر`;
+  const surahs=d.surahs.map(x=>`${x.ar} <span style="color:#88a097">${x.en}</span>`).join(' · ');
+  $('#pghero').innerHTML=`
+    <div class="num">صفحة · PAGE ${toArabicNum(n)}</div>
+    <h1>${surahs}</h1>
+    <div class="meta"><span>الجزء ${toArabicNum(d.juz)}</span>
+      <span>${d.t1&&d.t1.youtube_id?'• تدبّر ١':''}</span><span>${d.t2&&d.t2.youtube_id?'• تدبّر ٢':''}</span></div>
+    <div class="pg-nav">
+      <a href="./page.html?p=${Math.max(1,n-1)}">→ الصفحة ${toArabicNum(n-1>0?n-1:1)}</a>
+      <a href="./quran.html">المصحف</a>
+      <a href="./page.html?p=${Math.min(604,n+1)}">الصفحة ${toArabicNum(n+1<=604?n+1:604)} ←</a>
+    </div>`;
+  $('#main').innerHTML=`<div class="spread">
+      ${quranPanel(d)}
+      <div class="grid" style="gap:22px">
+        ${panel('تدبّر ١','السلسلة الأولى · ٢٠٢٠–٢٠٢٤',d.t1,'t1')}
+        ${panel('تدبّر ٢','السلسلة الثانية · ٢٠٢٤–',d.t2,'t2')}
+      </div></div>`;
+  // lazy youtube
+  $$('.embed-ph').forEach(ph=>{
+    const act=()=>{const e=ph.parentElement; e.innerHTML=`<iframe src="${e.dataset.src}&autoplay=1" allow="accelerometer;autoplay;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>`;};
+    ph.onclick=act; ph.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();act();}};
+  });
+  $$('.txt-toggle').forEach(b=>b.onclick=()=>{const el=document.getElementById(b.dataset.t);el.classList.toggle('full');b.textContent=el.classList.contains('full')?'طيّ النصّ ↑':'عرض النصّ كاملًا ↓';});
+})();
+</script>
+</body>
+</html>
