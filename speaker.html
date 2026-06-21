@@ -7,14 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./assets/style.css?v=20260620d">
+<link rel="stylesheet" href="./assets/style.css?v=20260621j">
 </head>
 <body>
 <section class="frontis"><div class="hero wrap" id="hero" style="padding:clamp(44px,6vw,72px) 0 clamp(30px,4vw,48px)">
   <div class="skeleton" style="color:var(--cream-on-deep)">…</div></div></section>
 <main class="sec wrap" id="main"></main>
 
-<script src="./assets/app.js?v=20260620d"></script>
+<script src="./assets/app.js?v=20260621j"></script>
 <script>
 chrome('speakers');
 const key=qp('v');
@@ -42,11 +42,11 @@ function monthBars(pres){
       </div></div>
     ${s.role?`<p class="lede" style="margin-top:18px">${esc(s.role)}</p>`:''}
     <div class="stats" style="margin-top:34px">
-      <div class="stat"><span class="n">${s.presentations}</span><span class="l">تدبّر</span></div>
-      <div class="stat"><span class="n">${s.pages_count}</span><span class="l">صفحة</span></div>
-      <div class="stat"><span class="n">${s.surahs_count}</span><span class="l">سورة</span></div>
-      <div class="stat"><span class="n">${s.minutes}</span><span class="l">دقيقة</span></div>
-      <div class="stat"><span class="n">${(s.minutes/Math.max(1,s.presentations)).toFixed(0)}</span><span class="l">متوسط الدقائق</span></div>
+      <div class="stat"><span class="n">${arNum(s.presentations)}</span><span class="l">تدبّر</span></div>
+      <div class="stat"><span class="n">${arNum(s.pages_count)}</span><span class="l">صفحة</span></div>
+      <div class="stat"><span class="n">${arNum(s.surahs_count)}</span><span class="l">سورة</span></div>
+      <div class="stat"><span class="n">${arNum(s.minutes)}</span><span class="l">دقيقة</span></div>
+      <div class="stat"><span class="n">${arNum((s.minutes/Math.max(1,s.presentations)).toFixed(0))}</span><span class="l">متوسط الدقائق</span></div>
     </div>
     <div class="pg-nav" style="margin-top:24px"><a href="./speakers.html">→ كلّ المتدبّرين</a></div>`;
 
@@ -56,18 +56,18 @@ function monthBars(pres){
       <div class="panel"><div class="panel-h"><span class="t">حضوره عبر الزمن</span>
         <span class="sub" style="font-size:13px;color:var(--ink-soft)">${s.first_date?fmtDate(s.first_date):''} — ${s.last_date?fmtDate(s.last_date):''}</span></div>
         <div class="panel-b">${monthBars(s.pres)}
-          <div class="pill-row" style="margin-top:16px">${s.t1?`<span class="chip t1">تدبّر ١ · ${s.t1} جلسة</span>`:''}${s.t2?`<span class="chip t2">تدبّر ٢ · ${s.t2} جلسة</span>`:''}</div></div></div>
-      <div class="panel"><div class="panel-h"><span class="t">السوَر التي تدبّرها</span><span class="sub" style="font-size:13px;color:var(--ink-soft)">${s.surahs_count} سورة</span></div>
+          <div class="pill-row" style="margin-top:16px">${s.t1?`<span class="chip t1">تدبّر ١ · ${arNum(s.t1)} جلسة</span>`:''}${s.t2?`<span class="chip t2">تدبّر ٢ · ${arNum(s.t2)} جلسة</span>`:''}</div></div></div>
+      <div class="panel"><div class="panel-h"><span class="t">السوَر التي تدبّرها</span><span class="sub" style="font-size:13px;color:var(--ink-soft)">${arNum(s.surahs_count)} سورة</span></div>
         <div class="panel-b"><div class="pill-row">${s.surahs.map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</div></div></div>
     </div>
     <div class="panel" style="margin-top:22px"><div class="panel-h"><span class="t">كلّ تدبّراته</span>
-       <span class="sub" style="font-size:13px;color:var(--ink-soft)">${s.presentations} صفحة — مرتّبة حسب المصحف</span></div>
+       <span class="sub" style="font-size:13px;color:var(--ink-soft)">${arNum(s.presentations)} صفحة — مرتّبة حسب المصحف</span></div>
       <div class="panel-b" style="padding:0">
         ${presByPage.map(p=>`<div class="res" style="border-bottom:1px solid var(--line)">
-          <a class="tag${p.series==='T2'?' s':''}" href="./page.html?p=${p.page}">صفحة ${p.page}</a>
+          <a class="tag${p.series==='T2'?' s':''}" href="./page.html?p=${p.page}">صفحة ${arNum(p.page)}</a>
           <span style="flex:1"><a href="./page.html?p=${p.page}" style="font-family:var(--f-display);font-size:17px;color:var(--ink)">${esc(p.surah)}</a>
             <span class="sub">· ${p.series} · ${p.date?fmtDate(p.date):''}</span></span>
-          ${ytLink(p)?`<a class="mono" style="font-size:13px" href="${ytLink(p)}" target="_blank" rel="noopener">▶ ${esc(p.start||'')}</a>`:''}
+          ${ytLink(p)?`<a class="mono" style="font-size:13px" href="${ytLink(p)}" target="_blank" rel="noopener">▶ ${arNum(p.start||'')}</a>`:''}
         </div>`).join('')}
       </div></div>`;
 })();

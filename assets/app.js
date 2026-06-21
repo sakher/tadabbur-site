@@ -1,5 +1,5 @@
 /* Tadabbur site — shared logic: chrome, data, search, tableau */
-const BUILD='20260620d';  // bump when data/code changes to bust browser cache
+const BUILD='20260621j';  // bump when data/code changes to bust browser cache
 const T = {
   data:{}, // cache
   async load(name){
@@ -16,7 +16,7 @@ const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;
 
 /* ---- chrome (header + footer) ---- */
 function chrome(active){
-  const nav=[['index','الصفحة الرئيسية','Home'],['quran','مصحف التدبر','Quran map'],
+  const nav=[['index','الرئيسية','Home'],['quran','المصحف','Quran map'],['themes','الموضوعات','Themes'],
              ['speakers','المتدبرون','Speakers'],['stats','إحصاءات','Stats'],['about','عن المشروع','About']];
   document.body.insertAdjacentHTML('afterbegin',`
    <header class="hdr"><div class="wrap">
@@ -53,13 +53,13 @@ async function initSearch(){
     const I=await build(); const q=v.toLowerCase(); const out=[];
     // page number
     if(/^\d{1,3}$/.test(v)){const n=+v; if(n>=1&&n<=604){const p=I.pages[n-1];
-      out.push(`<a class="res" href="./page.html?p=${n}"><span class="tag">صفحة ${n}</span><span><b>${esc(p.surah.ar)}</b> · <span class="sub">${esc(p.surah.en)} — جزء ${p.juz}</span></span></a>`);}}
+      out.push(`<a class="res" href="./page.html?p=${n}"><span class="tag">صفحة ${arNum(n)}</span><span><b>${esc(p.surah.ar)}</b> · <span class="sub">${esc(p.surah.en)} — جزء ${arNum(p.juz)}</span></span></a>`);}}
     // surahs
     I.surahs.filter(s=>s.ar.includes(v)||s.en.toLowerCase().includes(q)).slice(0,6).forEach(s=>
-      out.push(`<a class="res" href="./quran.html?surah=${s.num}"><span class="tag s">سورة</span><span><b>${esc(s.ar)}</b> <span class="sub">${esc(s.en)} · صفحات ${s.page_start}–${s.page_end}</span></span></a>`));
+      out.push(`<a class="res" href="./quran.html?surah=${s.num}"><span class="tag s">سورة</span><span><b>${esc(s.ar)}</b> <span class="sub">${esc(s.en)} · صفحات ${arNum(s.page_start)}–${arNum(s.page_end)}</span></span></a>`));
     // speakers
     I.speakers.filter(s=>(s.name&&s.name.includes(v))||(s.full_name&&s.full_name.includes(v))).slice(0,6).forEach(s=>
-      out.push(`<a class="res" href="./speaker.html?v=${encodeURIComponent(s.voice_code||s.name)}"><span class="tag" style="background:var(--green-deep)">متدبّر</span><span><b>${esc(s.full_name||s.name)}</b> <span class="sub">${s.presentations} تدبّر · ${s.pages_count} صفحة</span></span></a>`));
+      out.push(`<a class="res" href="./speaker.html?v=${encodeURIComponent(s.voice_code||s.name)}"><span class="tag" style="background:var(--green-deep)">متدبّر</span><span><b>${esc(s.full_name||s.name)}</b> <span class="sub">${arNum(s.presentations)} تدبّر · ${arNum(s.pages_count)} صفحة</span></span></a>`));
     inner.innerHTML = out.length? out.join('') : `<div class="empty">لا نتائج لـ «${esc(v)}»</div>`;
     box.classList.add('open');
   };
@@ -73,12 +73,28 @@ function renderTableau(host, pages, surahs, {anim=false,light=false}={}){
   const sstart=new Set(surahs.map(s=>s.page_start));
   host.className='tableau'+(anim?' anim':'')+(light?' light':'');
   host.innerHTML=pages.map(p=>{
-    const cls=p.t1&&p.t2?'both':p.t1?'t1':(p.t2?'t1':'miss');
+    // colour = how far this page has come: written reflection › recorded only › pending
+    const cls=p.gold?'both':(p.t1||p.t2)?'t1':'miss';
     const ss=sstart.has(p.page)?' sstart':'';
+    const st=p.gold?'تأمّل مكتوب':(p.t1||p.t2)?'مُسجَّلة':'بانتظار';
     return `<a class="tile ${cls}${ss}" href="./page.html?p=${p.page}" style="${anim?`animation-delay:${(p.page*0.45)}ms`:''}"
-      title="صفحة ${p.page} — ${p.surah.ar}${p.t1&&p.t2?' · تدبّر ١+٢':p.t1?' · تدبّر ١':''}"></a>`;
+      title="صفحة ${arNum(p.page)} — ${p.surah.ar} · ${st}"></a>`;
   }).join('');
 }
 
 const qp=k=>new URLSearchParams(location.search).get(k);
 function fmtDate(d){if(!d)return'';const[y,m,da]=d.split('-');const M=['','يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];return`${+da} ${M[+m]} ${y}`;}
+
+/* ---- gold helpers (shared by page.html + themes.html) ---- */
+const arNum=s=>String(s==null?'':s).replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+const mmssToSec=t=>{if(!t)return 0;const p=String(t).split(':').map(Number);return p.length===3?p[0]*3600+p[1]*60+p[2]:p.length===2?p[0]*60+p[1]:0;};
+const ytAt=(id,sec)=>`https://www.youtube.com/watch?v=${id}&t=${Math.max(0,Math.round(sec))}s`;
+/* style inline ayah refs [27:34] as links and [تصحيح لاحق …] as annotations */
+function linkify(text){
+  let s=esc(text||'');
+  s=s.replace(/\[تصحيح لاحق([^\]]*)\]/g,(m,b)=>`<span class="correction">${b.replace(/^\s*من\s*/,'').trim()||'تصحيح'}</span>`);
+  s=s.replace(/\[(\d{1,3}):(\d{1,3})(?:-\d{1,3}:\d{1,3})?\]/g,(m,su,ay)=>
+    `<a class="qref" href="https://quran.com/${su}/${ay}" target="_blank" rel="noopener">${arNum(su)}:${arNum(ay)}</a>`);
+  return s;
+}
+function confDot(c){const v=+c||0; if(v>=.9)return['hi','عالية']; if(v>=.7)return['mid','متوسطة']; return['lo','مبدئية'];}

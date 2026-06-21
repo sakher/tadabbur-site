@@ -6,96 +6,185 @@
 <title>صفحة · تدبّر</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./assets/style.css?v=20260620d">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/style.css?v=20260621j">
 </head>
 <body>
-<section class="frontis">
-  <div class="pg-hero wrap" id="pghero"><div class="skeleton" style="color:var(--cream-on-deep)">…</div></div>
+<section class="wrap">
+  <div class="pg-hero" id="pghero"><div class="skeleton">…</div></div>
 </section>
-<main class="sec wrap" id="main"></main>
+<main class="wrap" id="main" style="margin-top:6px"></main>
 
-<script src="./assets/app.js?v=20260620d"></script>
+<script src="./assets/app.js?v=20260621j"></script>
 <script>
 chrome('quran');
 const n=Math.max(1,Math.min(604,+qp('p')||1));
-function ytEmbed(b){ // lazy: placeholder -> iframe on click
-  if(!b||!b.youtube_id) return `<div class="empty" style="padding:30px">لا يوجد تسجيلٌ لهذه الصفحة في هذه السلسلة.</div>`;
-  const url=`https://www.youtube.com/embed/${b.youtube_id}?start=${b.start_s||0}&rel=0`;
-  return `<div class="embed" data-src="${url}">
-    <div class="embed-ph" role="button" tabindex="0" aria-label="تشغيل التدبّر">
-      <div><div class="play">▶</div><div class="who">${esc(b.presenter||'')}</div>
-      <div class="tm">${esc(b.start||'0:00')} → ${esc(b.end||'')}</div></div>
-    </div></div>`;
-}
-function panel(title,sub,b,uid){
-  if(!b) return `<div class="panel"><div class="panel-h"><span class="t">${title}</span><span class="sub" style="color:var(--ink-soft);font-size:13px">${sub}</span></div>
-    <div class="panel-b"><div class="empty">لم تُسجَّل هذه الصفحة في ${title}.</div></div></div>`;
-  const conf=b.confidence||'';
-  const txt=b.text? `<div class="tadabbur-txt" id="txt-${uid}">${esc(b.text)}</div>
-     <button class="txt-toggle" data-t="txt-${uid}">عرض النصّ كاملًا ↓</button>`
-     : `<div class="empty" style="padding:18px">نصّ التدبّر غير متوفّر.</div>`;
-  const watch = b.youtube_id ? `https://www.youtube.com/watch?v=${b.youtube_id}&t=${b.start_s||0}s` : null;
-  return `<div class="panel"><div class="panel-h"><span class="t">${title}</span>
-      <span class="sub" style="color:var(--ink-soft);font-size:13px">${sub}</span></div>
-    <div class="panel-b">
-      ${ytEmbed(b)}
-      <div class="byline"><b>${esc(b.presenter||'—')}</b>
-        ${b.date?`<span>· ${fmtDate(b.date)}</span>`:''}
-        ${b.session_number?`<span>· جلسة ${b.session_number}</span>`:''}
-        ${conf?`<span class="conf ${conf}">${conf==='high'?'مؤكّد':conf==='substitute'?'نائب':conf==='manual-handoff'?'موثّق يدويًا':'مبدئيّ'}</span>`:''}
-        ${watch?`<a class="mono yt-link" href="${watch}" target="_blank" rel="noopener" style="margin-inline-start:auto;color:var(--green);font-weight:600">▶ يوتيوب · ${esc(b.start||'0:00')}</a>`:''}</div>
-      ${txt}
-    </div></div>`;
-}
-function quranPanel(d){
-  if(d.quran && d.quran.verses && d.quran.verses.length){
-    const vs=d.quran.verses.map(v=>{
-      const a=v.k.split(':')[1];
-      return `${esc(v.ar)} <span class="marker">۝${toArabicNum(a)}</span>`;
-    }).join(' ');
-    const tr=d.quran.verses.filter(v=>v.en).map(v=>`<span class="ay-en"><b>${toArabicNum(v.k.split(':')[1])}</b> ${esc(v.en)}</span>`).join('');
-    const tf=d.quran.verses.filter(v=>v.tafsir).map(v=>`<div class="ay-tf"><b>${esc(v.k)}</b> ${esc(v.tafsir)}</div>`).join('');
-    return `<div class="panel"><div class="panel-h"><span class="t">${esc(d.quran.surah_ar||'')}</span>
-        <a class="sub" style="font-size:13px" href="${d.quran_com}" target="_blank" rel="noopener">على quran.com ↗</a></div>
-      <div class="panel-b">
-        <div class="qverse">${vs}</div>
-        ${tr?`<details class="qsec" open><summary>الترجمة — Abdel Haleem</summary><div class="qtrans">${tr}</div></details>`:''}
-        ${tf?`<details class="qsec"><summary>التفسير الميسر</summary><div class="qtaf">${tf}</div></details>`:''}
-      </div></div>`;
-  }
-  const s=d.surahs.map(x=>x.ar).join(' · ');
-  return `<div class="panel"><div class="panel-h"><span class="t">${esc(s)}</span></div>
-    <div class="panel-b"><p class="pill-row"><a class="chip t1" href="${d.quran_com}" target="_blank" rel="noopener">quran.com · صفحة ${d.page} ↗</a></p></div></div>`;
-}
-function toArabicNum(s){return String(s).replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
 
-(async()=>{
-  const d=await T.page(n);
-  document.title=`صفحة ${n} · ${d?d.surahs[0].ar:''} · تدبّر`;
-  const surahs=d.surahs.map(x=>`${x.ar} <span style="color:#88a097">${x.en}</span>`).join(' · ');
-  $('#pghero').innerHTML=`
-    <div class="num">صفحة · PAGE ${toArabicNum(n)}</div>
-    <h1>${surahs}</h1>
-    <div class="meta"><span>الجزء ${toArabicNum(d.juz)}</span>
-      <span>${d.t1&&d.t1.youtube_id?'• تدبّر ١':''}</span><span>${d.t2&&d.t2.youtube_id?'• تدبّر ٢':''}</span></div>
-    <div class="pg-nav">
-      <a href="./page.html?p=${Math.max(1,n-1)}">→ الصفحة ${toArabicNum(n-1>0?n-1:1)}</a>
-      <a href="./quran.html">المصحف</a>
-      <a href="./page.html?p=${Math.min(604,n+1)}">الصفحة ${toArabicNum(n+1<=604?n+1:604)} ←</a>
+/* ---------- QURAN panel (canonical, central) ---------- */
+function quranPanel(d){
+  const q=d.quran;
+  if(!q||!q.verses||!q.verses.length){
+    return `<div class="qpanel"><div class="qpanel-h"><span class="t">${esc(d.surahs.map(x=>x.ar).join(' · '))}</span></div>
+      <div style="padding:24px"><a class="chip t1" href="${d.quran_com}" target="_blank" rel="noopener">اقرأ الآيات على quran.com · صفحة ${arNum(d.page)} ↗</a></div></div>`;
+  }
+  const sName={}; (q.surahs||[]).forEach(s=>sName[s.num]=s.ar);
+  let curS=null, body='';
+  q.verses.forEach((v,i)=>{
+    const [s,a]=v.k.split(':');
+    if(s!==curS){ if(i>0) body+=`<div style="text-align:center;color:var(--gold);font-size:.8em;margin:8px 0">۞ ${esc(sName[+s]||'')} ۞</div>`; curS=s; }
+    body+=`${esc(v.ar)} <span class="vmark">۝${arNum(a)}</span> `;
+  });
+  const tr=q.verses.filter(v=>v.en).map(v=>`<span class="ay-en"><b>${arNum(v.k.split(':')[1])}</b> ${esc(v.en)}</span>`).join('');
+  const muy=q.verses.filter(v=>v.tafsir).map(v=>`<div class="ay-tf"><b>${arNum(v.k.split(':')[1])}</b> ${esc(v.tafsir)}</div>`).join('');
+  const sa=q.verses.filter(v=>v.saadi).map(v=>`<div class="ay-tf"><b>${arNum(v.k.split(':')[1])}</b> ${esc(v.saadi)}</div>`).join('');
+  return `<div class="qpanel">
+    <div class="qpanel-h"><span class="t">${esc(q.surah_ar||'')}</span>
+      <a class="lnk" href="${d.quran_com}" target="_blank" rel="noopener">quran.com ↗</a></div>
+    <div class="qverse">${body}</div>
+    ${tr?`<details class="qsec"><summary>الترجمة — Abdel Haleem</summary><div class="qtrans">${tr}</div></details>`:''}
+    ${muy?`<details class="qsec"><summary>التفسير الميسّر</summary><div class="qtaf">${muy}</div></details>`:''}
+    ${sa?`<details class="qsec"><summary>تفسير السعدي</summary><div class="qtaf">${sa}</div></details>`:''}
+  </div>`;
+}
+
+/* ---------- reflection (the AI gold) ---------- */
+function startSeconds(blk){
+  const t=blk.tad||{};
+  if(t.time_range&&t.time_range.start) return mmssToSec(t.time_range.start);  // AI-corrected = ground truth
+  return blk.start_s||0;
+}
+function listen(blk){
+  const t=blk.tad||{}; const yid=blk.youtube_id;
+  if(!yid) return '';
+  const start=(t.time_range&&t.time_range.start)||blk.start||'0:00';
+  const end=(t.time_range&&t.time_range.end)||blk.end||'';
+  const sec=startSeconds(blk);
+  const url=`https://www.youtube.com/embed/${yid}?start=${sec}&rel=0`;
+  return `<div class="listen">
+    <div class="embed" data-src="${url}">
+      <div class="embed-ph" role="button" tabindex="0" aria-label="تشغيل التدبّر">
+        <div><div class="play">▶</div>
+        <div class="who">${esc(t.presenter||blk.presenter||'')}</div>
+        <div class="tm">${arNum(start)} → ${arNum(end)}</div></div>
+      </div>
+    </div>
+    <div class="listen-foot"><a class="yt" href="${ytAt(yid,sec)}" target="_blank" rel="noopener">▶ شاهد على يوتيوب · ${arNum(start)}</a></div>
+  </div>`;
+}
+function splitProse(text){
+  // paragraph breaks at discourse markers; within each, group ~3 sentences per paragraph
+  const marked=(text||'').replace(/\s(الوقفة (?:الأولى|الثانية|الثالثة|الرابعة|الخامسة|السادسة)|الفائدة (?:الأولى|الثانية|الثالثة|الرابعة)|أما الفوائد|وأما الفوائد|وآخر ما أقف)/g,'\n$1');
+  const out=[];
+  marked.split('\n').forEach(ch=>{
+    const sents=ch.split(/(?<=[.؟!])\s+/).map(s=>s.trim()).filter(Boolean);
+    for(let i=0;i<sents.length;i+=3) out.push(sents.slice(i,i+3).join(' '));
+  });
+  return out.filter(Boolean);
+}
+function qblock(s){   // s: a quran segment {fragment, surah, ayah, ayah_end} — the MENTIONED fragment, with harakat
+  const ref=s.ayah_end?`${arNum(s.surah)}:${arNum(s.ayah)}-${arNum(s.ayah_end)}`:`${arNum(s.surah)}:${arNum(s.ayah)}`;
+  return `<div class="qinline"><span class="qbr">﴿</span><span class="qf">${esc(s.fragment)}</span><span class="qbr">﴾</span>
+    <a class="qinline-ref" href="https://quran.com/${s.surah}/${s.ayah}" target="_blank" rel="noopener">${ref}</a></div>`;
+}
+function proseHtml(t){
+  // segments (built offline): text pieces + quran fragments, each shown ONCE where it was mentioned
+  if(t.segments&&t.segments.length){
+    return t.segments.map(seg=> seg.type==='q'
+      ? qblock(seg)
+      : splitProse(seg.text).map(p=>`<p>${linkify(p)}</p>`).join('')
+    ).join('');
+  }
+  return splitProse(t.tadabbur).map(p=>`<p>${linkify(p)}</p>`).join('');
+}
+function lessons(t){
+  if(!t.lessons||!t.lessons.length) return '';
+  const li=t.lessons.map((l,i)=>`<li><span class="n">${arNum(i+1)}</span><span>${esc(l)}</span></li>`).join('');
+  return `<div class="block"><div class="block-h"><span class="ic">✦</span> ما آخذه معي</div><ul class="lessons">${li}</ul></div>`;
+}
+function chips(t){
+  const th=(t.themes||[]).map(x=>`<a class="chip" href="./themes.html?q=${encodeURIComponent(x)}">${esc(x)}</a>`).join('');
+  const kw=(t.keywords||[]).slice(0,10).map(x=>`<a class="chip t1" href="./themes.html?q=${encodeURIComponent(x)}">${esc(x)}</a>`).join('');
+  if(!th&&!kw) return '';
+  return `<div class="block"><div class="block-h"><span class="ic">۞</span> الموضوعات</div>
+    <div class="pill-row" style="margin-bottom:10px">${th}</div><div class="pill-row">${kw}</div></div>`;
+}
+function voices(blk){
+  const t=blk.tad||{}; const yid=blk.youtube_id;
+  if(!t.others||!t.others.length) return '';
+  const cards=t.others.map(o=>{
+    const link=yid?`<a class="yt" href="${ytAt(yid,mmssToSec(o.start))}" target="_blank" rel="noopener">▶ يوتيوب · ${arNum(o.start||'')}</a>`:'';
+    return `<details class="voice"><summary><span class="who">${esc(o.by||'—')}</span>
+        <span class="tm">${arNum(o.start||'')}${o.end?' → '+arNum(o.end):''}</span><span class="ar">▾</span></summary>
+      <div class="voice-b">${linkify(o.point)}<br>${link}</div></details>`;
+  }).join('');
+  return `<div class="block"><div class="block-h"><span class="ic">⁙</span> أصواتٌ أخرى من المجلس <span class="muted" style="font-size:14px">(${arNum(t.others.length)})</span></div>
+    <div class="voices">${cards}</div></div>`;
+}
+function reflection(blk){
+  if(!blk) return `<div class="card center muted">لم تُسجَّل هذه الصفحة في هذه السلسلة.</div>`;
+  const t=blk.tad;
+  if(!t||!t.has_tadabbur){
+    const body=blk.text?`<div class="tad-prose">${esc(blk.text)}</div>`:`<div class="card center muted">نصّ التدبّر لم يُعالَج بعد لهذه الصفحة.</div>`;
+    return `${blk.youtube_id?listen(blk):''}${body}`;
+  }
+  const [dc,dl]=confDot(t.confidence);
+  const head=`<div class="refl-head">
+      <span class="who">${esc(t.presenter||blk.presenter||'—')}</span>
+      ${t.ayah_range?`<span class="aya">${arNum(t.ayah_range)}</span>`:''}
+      ${blk.date?`<span class="role">· ${fmtDate(blk.date)}</span>`:''}
+      <span class="role" style="margin-inline-start:auto" title="ثقة المطابقة ${dl}"><span class="dot ${dc}"></span> ${dl}</span>
     </div>`;
-  $('#main').innerHTML=`<div class="spread">
-      ${quranPanel(d)}
-      <div class="grid" style="gap:22px">
-        ${panel('تدبّر ١','السلسلة الأولى · ٢٠٢٠–٢٠٢٤',d.t1,'t1')}
-        ${panel('تدبّر ٢','السلسلة الثانية · ٢٠٢٤–',d.t2,'t2')}
-      </div></div>`;
-  // lazy youtube
+  const km=t.key_message?`<div class="keymsg"><div class="lbl">ما الذي يريده ربّي مني</div><div class="txt">${esc(t.key_message)}</div></div>`:'';
+  const prose=`<div class="tad-prose">${proseHtml(t)}</div>`;
+  return `${head}${km}${blk.youtube_id?listen(blk):''}${prose}${lessons(t)}${chips(t)}${voices(blk)}`;
+}
+
+/* ---------- bootstrap ---------- */
+function bindEmbeds(){
   $$('.embed-ph').forEach(ph=>{
     const act=()=>{const e=ph.parentElement; e.innerHTML=`<iframe src="${e.dataset.src}&autoplay=1" allow="accelerometer;autoplay;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>`;};
     ph.onclick=act; ph.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();act();}};
   });
-  $$('.txt-toggle').forEach(b=>b.onclick=()=>{const el=document.getElementById(b.dataset.t);el.classList.toggle('full');b.textContent=el.classList.contains('full')?'طيّ النصّ ↑':'عرض النصّ كاملًا ↓';});
+}
+(async()=>{
+  const d=await T.page(n);
+  if(!d){$('#pghero').innerHTML='<div class="skeleton">تعذّر تحميل الصفحة.</div>'; return;}
+  document.title=`صفحة ${n} · ${d.surahs[0].ar} · تدبّر`;
+  const surahs=d.surahs.map(x=>`${x.ar} <span class="en">${x.en}</span>`).join(' · ');
+  const hasT1=d.t1&&(d.t1.tad||d.t1.youtube_id||d.t1.text);
+  const hasT2=d.t2&&(d.t2.tad||d.t2.youtube_id||d.t2.text);
+  $('#pghero').innerHTML=`
+    <div class="num">صفحة <span class="mono">${arNum(n)}</span> · جزء <span class="mono">${arNum(d.juz)}</span></div>
+    <h1>${surahs}</h1>
+    <div class="meta">
+      ${d.t1&&d.t1.tad?'<span><b class="o">۞</b> تدبّر ١ — تأمّلٌ مكتوب</span>':d.t1&&d.t1.youtube_id?'<span>• تدبّر ١</span>':''}
+      ${d.t2&&d.t2.tad?'<span><b class="o">۞</b> تدبّر ٢ — تأمّلٌ مكتوب</span>':d.t2&&d.t2.youtube_id?'<span>• تدبّر ٢</span>':''}
+    </div>
+    <div class="pg-nav">
+      <a href="./page.html?p=${Math.max(1,n-1)}">→ السابقة</a>
+      <a href="./quran.html">المصحف</a>
+      <a href="./themes.html">الموضوعات</a>
+      <a href="./page.html?p=${Math.min(604,n+1)}">التالية ←</a>
+    </div>`;
+
+  const tabs=[];
+  if(hasT1) tabs.push(['t1','تدبّر ١',d.t1]);
+  if(hasT2) tabs.push(['t2','تدبّر ٢',d.t2]);
+  let active=(d.t1&&d.t1.tad)?'t1':(d.t2&&d.t2.tad)?'t2':(tabs[0]?tabs[0][0]:null);
+
+  const qHtml=quranPanel(d);
+  const render=()=>{
+    const switcher=tabs.length>1
+      ? `<div class="series-tab">${tabs.map(([id,lbl])=>`<button data-s="${id}" class="${id===active?'on':''}">${lbl}${(id==='t1'?d.t1:d.t2).tad?' ۞':''}</button>`).join('')}</div>`:'';
+    const blk=active==='t1'?d.t1:d.t2;
+    $('#main').innerHTML=`<div class="spread">
+        <div class="qcol">${qHtml}</div>
+        <div class="refcol">${switcher}${reflection(blk)}</div>
+      </div>`;
+    $$('.series-tab button').forEach(b=>b.onclick=()=>{active=b.dataset.s; render();});
+    bindEmbeds();
+  };
+  render();
 })();
 </script>
 </body>

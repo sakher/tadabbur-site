@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./assets/style.css?v=20260620d">
+<link rel="stylesheet" href="./assets/style.css?v=20260621j">
 </head>
 <body>
 <section class="frontis"><div class="hero wrap" style="padding:clamp(40px,6vw,64px) 0 clamp(28px,4vw,40px)">
@@ -17,9 +17,9 @@
     <span class="en">The whole mushaf — every tile is a page; open it for its reflection.</span></p>
   <div class="tableau-wrap" style="margin-top:34px"><div class="tableau" id="tableau"></div>
     <div class="legend">
-      <span><i class="tile both" style="position:static;width:13px;height:13px"></i> تدبّر ١ و ٢</span>
-      <span><i class="tile t1" style="position:static;width:13px;height:13px"></i> تدبّر ١</span>
-      <span><i class="tile miss" style="position:static;width:13px;height:13px"></i> بانتظار التوثيق</span>
+      <span><i class="tile both" style="position:static;width:14px;height:14px"></i> تأمّلٌ مكتوب</span>
+      <span><i class="tile t1" style="position:static;width:14px;height:14px"></i> مُسجَّلة · بانتظار التأمّل</span>
+      <span><i class="tile miss" style="position:static;width:14px;height:14px"></i> بانتظار</span>
     </div></div>
 </div></section>
 
@@ -31,14 +31,14 @@
       <select id="fj"><option value="">كلّ الأجزاء</option></select></div>
     <div class="field"><label for="fp">اذهب إلى صفحة</label>
       <input class="inp" id="fp" type="number" min="1" max="604" placeholder="١–٦٠٤" style="min-width:120px"></div>
-    <div class="field"><label for="fv">يحوي تسجيلًا</label>
-      <select id="fv"><option value="">الكلّ</option><option value="both">تدبّر ١ و ٢</option><option value="t2">له تدبّر ٢</option><option value="miss">غير موثّق</option></select></div>
+    <div class="field"><label for="fv">الحالة</label>
+      <select id="fv"><option value="">الكلّ</option><option value="gold">تأمّل مكتوب</option><option value="rec">مُسجَّلة</option><option value="miss">بانتظار</option></select></div>
     <div class="count" id="count"></div>
   </div>
   <div class="grid cols-3" id="list"></div>
 </main>
 
-<script src="./assets/app.js?v=20260620d"></script>
+<script src="./assets/app.js?v=20260621j"></script>
 <script>
 chrome('quran');
 let PAGES, META;
@@ -48,8 +48,8 @@ function row(p){
   const pres=[p.t1_pres,p.t2_pres].filter(Boolean);
   return `<a class="card" href="./page.html?p=${p.page}" style="display:flex;flex-direction:column;gap:8px">
     <div style="display:flex;align-items:baseline;justify-content:space-between">
-      <span class="mono" style="font-size:13px;color:var(--gilt)">صفحة ${p.page}</span>
-      <span class="mono" style="font-size:12px;color:var(--ink-soft)">جزء ${p.juz}</span></div>
+      <span class="mono" style="font-size:13px;color:var(--gilt)">صفحة ${arNum(p.page)}</span>
+      <span class="mono" style="font-size:12px;color:var(--ink-soft)">جزء ${arNum(p.juz)}</span></div>
     <div class="amiri" style="font-size:22px;font-weight:700;color:var(--ink)">${esc(p.surah.ar)}${esc(extra)}</div>
     <div style="font-size:12.5px;color:var(--ink-soft)">${esc(p.surah.en)}</div>
     ${pres.length?`<div style="font-size:13px;color:var(--ink-soft)">${pres.map(esc).join(' · ')}</div>`:''}
@@ -60,8 +60,8 @@ function apply(){
   let list=PAGES;
   if(s){const su=META.surahs[+s-1]; list=list.filter(p=>p.page>=su.page_start&&p.page<=su.page_end);}
   if(j){const ju=META.juz[+j-1]; list=list.filter(p=>p.page>=ju.page_start&&p.page<=ju.page_end);}
-  if(v==='both')list=list.filter(p=>p.t1&&p.t2); else if(v==='t2')list=list.filter(p=>p.t2); else if(v==='miss')list=list.filter(p=>!p.t1&&!p.t2);
-  $('#count').innerHTML=`<b>${list.length}</b> صفحة`;
+  if(v==='gold')list=list.filter(p=>p.gold); else if(v==='rec')list=list.filter(p=>p.t1||p.t2); else if(v==='miss')list=list.filter(p=>!p.t1&&!p.t2);
+  $('#count').innerHTML=`<b>${arNum(list.length)}</b> صفحة`;
   $('#list').innerHTML=list.length?list.map(row).join(''):`<div class="empty" style="grid-column:1/-1">لا صفحات بهذا المرشّح.</div>`;
 }
 (async()=>{

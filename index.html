@@ -4,27 +4,33 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>تدبّر · ختمة تدبّرية كاملة، صفحةً صفحة</title>
-<meta name="description" content="ست سنوات من تدبّر القرآن الكريم — ٦٠٤ صفحات، جلسةً جلسة، بأصوات من تدبّروها. مصحف تفاعلي مع تسجيلات التدبّر عند لحظتها.">
+<meta name="description" content="ست سنوات من تدبّر القرآن الكريم — ٦٠٤ صفحات. لكل صفحة: تأمّلٌ مكتوب، خلاصةٌ في سطر، ودروسٌ تُؤخذ، بأصوات من تدبّروها وعند لحظتها بالضبط.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./assets/style.css?v=20260620d">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/style.css?v=20260621j">
 </head>
 <body>
 <section class="frontis">
   <div class="hero wrap">
     <div class="kicker">ختمة تدبّريّة كاملة · ٢٠٢٠ — ٢٠٢٦</div>
     <h1>تدبّر القرآن،<br><span class="gilt">صفحةً صفحة</span></h1>
-    <p class="lede">ستُّ سنواتٍ من التأمّل الجماعيّ في كلام الله — ٦٠٤ صفحاتٍ، تُقرأ وتُفهَم وتُعاش، بأصوات من تدبّروها.
-      تنقّل في المصحف، واستمع إلى تدبّر كلِّ صفحةٍ عند لحظته بالضبط.
-      <span class="en">Walk the whole Quran, page by page — and hear each page's reflection at the exact moment it was spoken.</span></p>
-    <div class="tableau-wrap" style="margin-top:clamp(34px,5vw,52px)">
+    <p class="lede">ستُّ سنواتٍ من التأمّل الجماعيّ في كلام الله — ٦٠٤ صفحاتٍ، تُقرأ وتُفهَم وتُعاش.
+      لكلِّ صفحةٍ الآن <b style="color:var(--cream)">تأمُّلٌ مكتوبٌ مُنقّى</b>، وخلاصةٌ في سطر، ودروسٌ تُؤخذ، وأصواتٌ من تدبّروها — عند لحظتها بالضبط.
+      <span class="en">The whole Quran, reflected on page by page — now with a distilled written reflection, a one-line takeaway, and lessons for every page.</span></p>
+
+    <a class="featured" id="featured" href="#" style="display:block; text-decoration:none">
+      <div class="lbl">من خلاصات الصفحات</div>
+      <div class="km">…</div>
+      <div class="src"></div>
+    </a>
+
+    <div style="margin-top:clamp(40px,6vw,56px)">
       <div class="tableau anim" id="tableau" aria-label="٦٠٤ صفحة من المصحف"></div>
       <div class="legend">
-        <span><i class="tile both" style="position:static;width:13px;height:13px"></i> تدبّر ١ و ٢</span>
-        <span><i class="tile t1" style="position:static;width:13px;height:13px"></i> تدبّر ١</span>
-        <span><i class="tile miss" style="position:static;width:13px;height:13px"></i> بانتظار التوثيق</span>
-        <span style="color:var(--gilt-soft)">▔ بداية سورة</span>
+        <span><i class="tile both" style="position:static;width:14px;height:14px"></i> تأمّلٌ مكتوب</span>
+        <span><i class="tile t1" style="position:static;width:14px;height:14px"></i> مُسجَّلة · بانتظار التأمّل</span>
+        <span><i class="tile miss" style="position:static;width:14px;height:14px"></i> بانتظار</span>
       </div>
     </div>
     <div class="stats" id="stats"></div>
@@ -33,20 +39,23 @@
 
 <section class="sec wrap">
   <div class="sec-head">
-    <div><div class="ey">كيف تتصفّح</div><h2>طريقان إلى الصفحة</h2></div>
-    <div class="sub">كلُّ صفحةٍ تجمع: نصّ الآيات · تدبّر السلسلة الأولى · تدبّر الثانية · بصوت المتدبّر</div>
+    <div><div class="ey">كيف تتصفّح</div><h2>ثلاثة أبواب إلى التدبّر</h2></div>
+    <div class="sub" style="max-width:380px">ادخل من المصحف صفحةً صفحة، أو من الموضوع، أو من صوت المتدبّر.</div>
   </div>
-  <div class="grid cols-2">
+  <div class="grid cols-3">
     <a class="card" href="./quran.html">
-      <h3 style="font-size:24px;margin-bottom:8px">مصحف التدبّر</h3>
-      <p style="color:var(--ink-soft);margin:0 0 14px">ابحث بالسورة أو الجزء أو رقم الصفحة. كلُّ صفحةٍ تفتح على تسجيل التدبّر عند توقيته،
-        ونصِّ ما قيل، ونصِّ الآيات.</p>
-      <span class="pill-row"><span class="chip">٦٠٤ صفحة</span><span class="chip t1">١١٤ سورة</span><span class="chip t2">٣٠ جزء</span></span>
+      <h3>مصحف التدبّر</h3>
+      <p class="muted" style="margin:0 0 16px">ابحث بالسورة أو الجزء أو رقم الصفحة. كلُّ صفحةٍ تفتح على التأمّل المكتوب، والآيات، والتسجيل عند توقيته.</p>
+      <span class="pill-row"><span class="chip">٦٠٤ صفحة</span><span class="chip t1">١١٤ سورة</span></span>
+    </a>
+    <a class="card" href="./themes.html">
+      <h3>الموضوعات والرسائل</h3>
+      <p class="muted" style="margin:0 0 16px">جدارٌ من الخلاصات: ما الذي يريده ربُّك منك في كلِّ صفحة؟ رشّح بالموضوع، واقفز إلى الصفحة.</p>
+      <span class="pill-row" id="topthemes"></span>
     </a>
     <a class="card" href="./speakers.html">
-      <h3 style="font-size:24px;margin-bottom:8px">المتدبّرون</h3>
-      <p style="color:var(--ink-soft);margin:0 0 14px">ثلّةٌ من الأطبّاء والمهندسين والعلماء واللغويّين، كلٌّ يقرأ كلام الله بعدسته.
-        صفحاتٌ، ودقائق، وسوَرٌ تدبّرها كلُّ صوت.</p>
+      <h3>المتدبّرون</h3>
+      <p class="muted" style="margin:0 0 16px">ثلّةٌ من الأطبّاء والمهندسين والعلماء واللغويّين، كلٌّ يقرأ كلام الله بعدسته.</p>
       <span class="pill-row" id="topspk"></span>
     </a>
   </div>
@@ -54,26 +63,37 @@
 
 <section class="sec wrap" style="padding-top:0">
   <div class="rule" style="margin-bottom:clamp(40px,6vw,64px)"></div>
-  <div class="sec-head"><div><div class="ey">العمود الفقريّ للبيانات</div><h2>كلُّ صفحةٍ موثّقة بالصوت</h2></div></div>
-  <p style="max-width:720px;color:var(--ink-soft);font-size:16.5px;line-height:1.85">
-    رُبِطت كلُّ صفحةٍ بجلستها الحقيقيّة من محضر مجموعة البرنامج، ثمّ حُدّد المتدبّر لكلِّ صفحةٍ
-    <b style="color:var(--ink)">ببصمة صوته</b> وتوقيتُ تدبّره داخل التسجيل. نِسبة التطابق بين البصمة والجدول المُعلَن
-    تجاوزت ٩٠٪، فصار بإمكانك أن تنتقل مباشرةً إلى اللحظة التي تُدبّرت فيها الصفحة التي تقرؤها.
+  <div class="sec-head"><div><div class="ey">من النصّ إلى التأمّل</div><h2>كيف صُنعت كلُّ صفحة</h2></div></div>
+  <p style="max-width:740px;color:var(--ink-soft);font-size:16.5px;line-height:1.9">
+    كلُّ صفحةٍ رُبطت بجلستها الحقيقيّة، وحُدّد المتدبّر <b style="color:var(--ink)">ببصمة صوته</b> وتوقيتُ تدبّره.
+    ثمّ مُرّر نصُّ كلِّ صفحةٍ على نموذجٍ لغويٍّ كبير — مع نصِّ القرآن والتفسير المعتمد — لاستخلاص التأمّل بصوت المتدبّر،
+    وتنقيته، واستخراج الخلاصة والدروس والموضوعات، مع الحفاظ على أمانة الكلام وتوثيق أيِّ تصحيح.
     <a href="./about.html">اقرأ عن المنهج والمصادر ←</a> &nbsp;·&nbsp;
-    <a href="./stats.html">إحصاءات التدبّر: الطول والكلمات والموضع ←</a>
+    <a href="./stats.html">إحصاءات التدبّر ←</a>
   </p>
 </section>
 
-<script src="./assets/app.js?v=20260620d"></script>
+<script src="./assets/app.js?v=20260621j"></script>
 <script>
 chrome('index');
 (async()=>{
-  const [pages,meta,speakers]=await Promise.all([T.load('pages'),T.load('meta'),T.load('speakers')]);
+  const [pages,meta,speakers,gold,themes]=await Promise.all([
+    T.load('pages'),T.load('meta'),T.load('speakers'),T.load('gold'),T.load('themes')]);
   renderTableau(document.getElementById('tableau'),pages,meta.surahs,{anim:true});
   const s=meta.stats;
-  const cards=[['٦٠٤','صفحة · ختمة كاملة'],[s.presentations,'تدبّر مُوثّق'],['٢٥٨','جلسة'],[s.speakers,'متدبّر'],['٦','سنوات']];
+  const cards=[['٦٠٤','صفحة · ختمة كاملة'],[arNum(gold.count),'تأمّل مكتوب'],
+    [arNum(themes.themes.length)+'+','موضوع'],[arNum(s.speakers),'متدبّر'],['٦','سنوات']];
   document.getElementById('stats').innerHTML=cards.map(([n,l])=>`<div class="stat"><span class="n">${n}</span><span class="l">${l}</span></div>`).join('');
-  document.getElementById('topspk').innerHTML=speakers.slice(0,3).map(sp=>`<span class="chip">${esc(sp.name)} · ${sp.presentations}</span>`).join('');
+  document.getElementById('topspk').innerHTML=speakers.slice(0,3).map(sp=>`<span class="chip">${esc(sp.name)}</span>`).join('');
+  document.getElementById('topthemes').innerHTML=themes.themes.slice(0,3).map(t=>`<span class="chip t1">${esc(t.name)}</span>`).join('');
+  // featured key-message (varies per visit by page count)
+  if(gold.pages.length){
+    const r=gold.pages[(pages.length*7+gold.pages.length)%gold.pages.length];
+    const f=document.getElementById('featured');
+    f.href=`./page.html?p=${r.page}`;
+    f.querySelector('.km').textContent=r.key_message;
+    f.querySelector('.src').innerHTML=`<a href="./page.html?p=${r.page}">${esc(r.surah_ar||'')} · صفحة ${arNum(r.page)} — ${esc(r.presenter||'')} ←</a>`;
+  }
 })();
 </script>
 </body>

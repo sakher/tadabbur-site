@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الموضوعات والرسائل · تدبّر</title>
+<meta name="description" content="تصفّح خلاصة كل صفحة: ما الذي يريده ربّك منك — مرتّبةً بالموضوع، صفحةً صفحة.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/style.css?v=20260621j">
+</head>
+<body>
+<section class="frontis">
+  <div class="hero wrap" style="padding-block:clamp(48px,8vw,84px)">
+    <div class="kicker">الموضوعات والرسائل · THEMES</div>
+    <h1 style="font-size:clamp(38px,7vw,76px)">خلاصة كلِّ صفحة،<br><span class="gilt">في سطرٍ واحد</span></h1>
+    <p class="lede">لكلِّ صفحةٍ تأمَّلها المجلس، استخرجنا <b style="color:var(--cream)">رسالةً واحدة</b>: ما الذي يريده ربُّك منك في هذه الآيات؟
+      تصفّحها كلَّها، أو رشّح بالموضوع.
+      <span class="en">One distilled takeaway per page — browse the whole Quran by what it asks of you.</span></p>
+  </div>
+</section>
+
+<div class="filterbar"><div class="wrap">
+  <label class="srch" style="display:flex; min-width:240px; flex:1; max-width:420px">
+    <span aria-hidden="true">⌕</span>
+    <input id="q" type="search" placeholder="ابحث في الرسائل والموضوعات…" autocomplete="off">
+  </label>
+  <span id="chips" class="pill-row" style="gap:8px"></span>
+</div></div>
+
+<main class="wrap sec" style="padding-top:26px">
+  <div class="count-line" id="count"></div>
+  <div class="wall" id="wall"><div class="skeleton">…</div></div>
+</main>
+
+<script src="./assets/app.js?v=20260621j"></script>
+<script>
+chrome('themes');
+let GOLD=[], active=null, query='';
+
+function card(r){
+  const th=(r.themes||[]).slice(0,3).map(x=>`<span class="chip" style="pointer-events:none">${esc(x)}</span>`).join('');
+  return `<a class="km-card" href="./page.html?p=${r.page}">
+    <div class="top"><span class="surah">${esc(r.surah_ar||'')}</span>
+      <span><span class="ser ${r.series==='T2'?'t2':''}">${r.series==='T2'?'تدبّر ٢':'تدبّر ١'}</span>
+      <span class="pg">· ص ${arNum(r.page)}</span></span></div>
+    <div class="km">${esc(r.key_message)}</div>
+    <div class="pill-row">${th}</div></a>`;
+}
+function matches(r){
+  if(active && !((r.themes||[]).some(t=>t.includes(active))||(r.keywords||[]).some(k=>k.includes(active)))) return false;
+  if(query){
+    const hay=(r.key_message+' '+(r.surah_ar||'')+' '+(r.themes||[]).join(' ')+' '+(r.keywords||[]).join(' '));
+    if(!hay.includes(query)) return false;
+  }
+  return true;
+}
+function draw(){
+  const rows=GOLD.filter(matches);
+  $('#count').textContent=`${arNum(rows.length)} رسالة`+(active?` · «${active}»`:'')+(query?` · بحث: «${query}»`:'');
+  $('#wall').innerHTML=rows.length?rows.map(card).join(''):`<div class="empty">لا رسائل مطابقة.</div>`;
+  $$('#chips .fchip').forEach(c=>c.classList.toggle('on',c.dataset.t===active));
+}
+(async()=>{
+  const [g,t]=await Promise.all([T.load('gold'),T.load('themes')]);
+  GOLD=g.pages;
+  const top=t.themes.slice(0,14);
+  $('#chips').innerHTML=`<button class="fchip ${active?'':'on'}" data-t="">الكل</button>`+
+    top.map(x=>`<button class="fchip" data-t="${esc(x.name)}">${esc(x.name)}<span class="c">${arNum(x.count)}</span></button>`).join('');
+  $$('#chips .fchip').forEach(c=>c.onclick=()=>{active=c.dataset.t||null; draw();});
+  const pre=qp('q'); if(pre){query=pre; $('#q').value=pre;}
+  let tm; $('#q').addEventListener('input',e=>{clearTimeout(tm); tm=setTimeout(()=>{query=e.target.value.trim(); draw();},120);});
+  draw();
+})();
+</script>
+</body>
+</html>
