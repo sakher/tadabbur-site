@@ -104,9 +104,11 @@ a.chip:hover,.chip:hover{background:var(--green); color:#fff; border-color:var(-
   background-size:46px 46px, 64px 64px, 100% 100%;
   -webkit-mask-image:linear-gradient(180deg,#000 30%,transparent); mask-image:linear-gradient(180deg,#000 30%,transparent);}
 .hero{padding-block:clamp(58px,10vw,116px); position:relative}
-.kicker{font-family:var(--f-ui); font-weight:600; font-size:14px; color:var(--gold-soft); display:flex; align-items:center; gap:11px; margin-bottom:24px}
+.kicker{font-family:var(--f-ui); font-weight:600; font-size:14px; color:var(--gold-soft); display:flex; align-items:center; gap:11px; margin-bottom:32px}
 .kicker::before{content:"۞"; font-family:var(--f-read); font-size:18px; color:var(--gold)}
-.hero h1{font-size:clamp(46px,9vw,100px); line-height:1.02; color:var(--cream)}
+/* Amiri Arabic at display size carries tall diacritics (shadda/fatha) + deep descenders —
+   needs generous leading so the two lines don't collide and the harakat don't stab the kicker */
+.hero h1{font-size:clamp(44px,8.4vw,92px); line-height:1.4; color:var(--cream); letter-spacing:0}
 .hero h1 .gilt{background:linear-gradient(100deg,var(--gold-bright),var(--gold) 55%,var(--gold-bright));
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent}
 .lede{max-width:680px; margin-top:28px; font-size:clamp(16.5px,2vw,19.5px); line-height:1.9; color:var(--cream-soft)}

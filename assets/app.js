@@ -1,5 +1,5 @@
 /* Tadabbur site — shared logic: chrome, data, search, tableau */
-const BUILD='20260621j';  // bump when data/code changes to bust browser cache
+const BUILD='20260621k';  // bump when data/code changes to bust browser cache
 const T = {
   data:{}, // cache
   async load(name){
