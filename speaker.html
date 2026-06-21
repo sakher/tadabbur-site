@@ -30,14 +30,14 @@ function monthBars(pres){
 }
 (async()=>{
   const all=await T.load('speakers');
-  const s=all.find(x=>x.voice_code===key)||all.find(x=>x.name===key);
+  const s=all.find(x=>x.key===key)||all.find(x=>x.voice_code===key)||all.find(x=>x.name===key);
   if(!s){$('#hero').innerHTML='<h1>غير موجود</h1>';return;}
-  document.title=`${s.full_name||s.name} · تدبّر`;
+  document.title=`${s.display_name||s.name} · تدبّر`;
   $('#hero').innerHTML=`
     <div style="display:flex;align-items:center;gap:20px;justify-content:center;flex-wrap:wrap">
-      <div class="avatar" style="width:78px;height:78px;font-size:34px">${esc(initial(s.full_name||s.name))}</div>
+      <div class="avatar" style="width:78px;height:78px;font-size:34px">${esc(initial(s.display_name||s.name))}</div>
       <div style="text-align:start">
-        <h1 style="font-size:clamp(30px,5vw,52px);color:#fff">${esc(s.full_name||s.name)}</h1>
+        <h1 style="font-size:clamp(30px,5vw,52px);color:#fff">${esc(s.display_name||s.name)}</h1>
         <div style="color:var(--gilt-soft);font-size:16px;margin-top:4px">${[s.kunya,s.profession].filter(Boolean).map(esc).join(' · ')||'متدبّر'}</div>
       </div></div>
     ${s.role?`<p class="lede" style="margin-top:18px">${esc(s.role)}</p>`:''}

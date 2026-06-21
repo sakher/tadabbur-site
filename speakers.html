@@ -32,9 +32,9 @@ chrome('speakers');
 let SPK;
 const initial=n=>(n||'؟').trim()[0];
 function card(s){
-  return `<a class="card spk" href="./speaker.html?v=${encodeURIComponent(s.voice_code||s.name)}">
-    <div class="top"><div class="avatar">${esc(initial(s.full_name||s.name))}</div>
-      <div><div class="nm">${esc(s.full_name||s.name)}</div>
+  return `<a class="card spk" href="./speaker.html?v=${encodeURIComponent(s.key||s.voice_code||s.name)}">
+    <div class="top"><div class="avatar">${esc(initial(s.display_name||s.name))}</div>
+      <div><div class="nm">${esc(s.display_name||s.name)}</div>
         <div class="ro">${esc(s.role? s.role.split('؛')[0] : (s.profession||'متدبّر'))}</div></div></div>
     <div class="figs">
       <div class="fig"><span class="v">${arNum(s.presentations)}</span><span class="k">تدبّر</span></div>

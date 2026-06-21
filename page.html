@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./assets/style.css?v=20260621l">
+<style>.who-link{color:inherit;text-decoration:none;border-bottom:1px dashed var(--gold,#b8945f)}.who-link:hover{color:var(--gold,#b8945f)}</style>
 </head>
 <body>
 <section class="wrap">
@@ -48,6 +49,10 @@ function quranPanel(d){
 }
 
 /* ---------- reflection (the AI gold) ---------- */
+function presLink(blk){   // presenter name → strong link to their profile (when known)
+  const t=blk.tad||{}; const nm=esc(blk.presenter||t.presenter||'—');
+  return blk.speaker_key?`<a class="who-link" href="./speaker.html?v=${encodeURIComponent(blk.speaker_key)}" title="صفحة المتدبّر">${nm}</a>`:nm;
+}
 function startSeconds(blk){
   const t=blk.tad||{};
   if(t.time_range&&t.time_range.start) return mmssToSec(t.time_range.start);  // AI-corrected = ground truth
@@ -64,7 +69,7 @@ function listen(blk){
     <div class="embed" data-src="${url}">
       <div class="embed-ph" role="button" tabindex="0" aria-label="تشغيل التدبّر">
         <div><div class="play">▶</div>
-        <div class="who">${esc(t.presenter||blk.presenter||'')}</div>
+        <div class="who">${presLink(blk)}</div>
         <div class="tm">${arNum(start)} → ${arNum(end)}</div></div>
       </div>
     </div>
@@ -129,7 +134,7 @@ function reflection(blk){
   }
   const [dc,dl]=confDot(t.confidence);
   const head=`<div class="refl-head">
-      <span class="who">${esc(t.presenter||blk.presenter||'—')}</span>
+      <span class="who">${presLink(blk)}</span>
       ${t.ayah_range?`<span class="aya">${arNum(t.ayah_range)}</span>`:''}
       ${blk.date?`<span class="role">· ${fmtDate(blk.date)}</span>`:''}
       <span class="role" style="margin-inline-start:auto" title="ثقة المطابقة ${dl}"><span class="dot ${dc}"></span> ${dl}</span>
