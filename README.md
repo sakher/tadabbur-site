@@ -20,7 +20,7 @@ Fully static — no build step. Fonts load from Google Fonts; videos embed from 
 ## Regenerate the data
 The site reads `docs/data/*` (generated from the repo's metadata + transcripts):
 ```
-python3 build_site.py     # rewrites docs/data/{meta,pages,speakers}.json + docs/data/pages/<n>.json
+python3 build.py     # rewrites docs/data/{meta,pages,speakers}.json + docs/data/pages/<n>.json
 ```
 
 ## Data layer
