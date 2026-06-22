@@ -28,9 +28,10 @@
     <div style="margin-top:clamp(40px,6vw,56px)">
       <div class="tableau anim" id="tableau" aria-label="٦٠٤ صفحة من المصحف"></div>
       <div class="legend">
-        <span><i class="tile both" style="position:static;width:14px;height:14px"></i> تأمّلٌ مكتوب</span>
-        <span><i class="tile t1" style="position:static;width:14px;height:14px"></i> مُسجَّلة · بانتظار التأمّل</span>
-        <span><i class="tile miss" style="position:static;width:14px;height:14px"></i> بانتظار</span>
+        <span><i class="tile both" style="position:static;width:14px;height:14px"></i> في الختمتين</span>
+        <span><i class="tile t1" style="position:static;width:14px;height:14px"></i> الختمة الأولى</span>
+        <span><i class="tile t2" style="position:static;width:14px;height:14px"></i> الختمة الثانية</span>
+        <span><i class="tile issue" style="position:static;width:14px;height:14px"></i> ناقصة · بحاجة لمراجعة</span>
       </div>
     </div>
     <div class="stats" id="stats"></div>
@@ -81,7 +82,8 @@ chrome('index');
     T.load('pages'),T.load('meta'),T.load('speakers'),T.load('gold'),T.load('themes')]);
   renderTableau(document.getElementById('tableau'),pages,meta.surahs,{anim:true});
   const s=meta.stats;
-  const cards=[['٦٠٤','صفحة · ختمة كاملة'],[arNum(gold.count),'تأمّل مكتوب'],
+  const both=pages.filter(p=>p.cov==='both').length;
+  const cards=[['٦٠٤','صفحة · ختمة كاملة'],[arNum(both),'صفحة في الختمتين'],
     [arNum(themes.themes.length)+'+','موضوع'],[arNum(s.speakers),'متدبّر'],['٦','سنوات']];
   document.getElementById('stats').innerHTML=cards.map(([n,l])=>`<div class="stat"><span class="n">${n}</span><span class="l">${l}</span></div>`).join('');
   document.getElementById('topspk').innerHTML=speakers.slice(0,3).map(sp=>`<span class="chip">${esc(sp.name)}</span>`).join('');

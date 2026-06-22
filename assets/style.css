@@ -130,8 +130,13 @@ a.chip:hover,.chip:hover{background:var(--green); color:#fff; border-color:var(-
 @media(max-width:680px){.tableau{grid-template-columns:repeat(26,1fr)}}
 .tile{aspect-ratio:1; border-radius:2.5px; background:rgba(238,229,205,.1); transition:transform .12s, box-shadow .12s; position:relative}
 .tableau.light .tile{background:rgba(25,33,28,.07)}
-.tile.both{background:var(--gold-soft)} .tile.t1{background:var(--green-soft)} .tile.miss{background:rgba(238,229,205,.13)}
-.tableau.light .tile.miss{background:rgba(25,33,28,.08)}
+/* coverage: both ختمتين (bright gold + green ring) · first ختمة (green) · second ختمة (amber) */
+.tile.both{background:var(--gold-bright); box-shadow:0 0 0 1.6px var(--green-soft) inset}
+.tile.t1{background:var(--green-soft)}
+.tile.t2{background:var(--gold)}
+/* single "issue" key: missing / untranscribed / doubted — dim with a rust ring */
+.tile.issue,.tile.miss{background:rgba(238,229,205,.10); box-shadow:0 0 0 1.5px rgba(183,92,66,.78) inset}
+.tableau.light .tile.issue,.tableau.light .tile.miss{background:rgba(25,33,28,.06)}
 .tile.gold-on{box-shadow:0 0 0 1.5px var(--gold-bright) inset}
 .tile.sstart{outline:1px solid rgba(227,197,126,.5)}
 .tile:hover{transform:scale(1.9); z-index:5; box-shadow:0 4px 14px rgba(0,0,0,.4); border-radius:3px}

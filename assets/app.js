@@ -74,10 +74,14 @@ function renderTableau(host, pages, surahs, {anim=false,light=false}={}){
   const sstart=new Set(surahs.map(s=>s.page_start));
   host.className='tableau'+(anim?' anim':'')+(light?' light':'');
   host.innerHTML=pages.map(p=>{
-    // colour = how far this page has come: written reflection › recorded only › pending
-    const cls=p.gold?'both':(p.t1||p.t2)?'t1':'miss';
+    // colour = which ختمة covers this page (both / first / second); a single "issue" key
+    // marks pages that are missing, untranscribed, or doubted.
+    const cls=p.issue?'issue':(p.cov||'issue');
     const ss=sstart.has(p.page)?' sstart':'';
-    const st=p.gold?'تأمّل مكتوب':(p.t1||p.t2)?'مُسجَّلة':'بانتظار';
+    const st=p.issue?'ناقصة · بحاجة لمراجعة'
+      :p.cov==='both'?'في الختمتين'
+      :p.cov==='t1'?'الختمة الأولى'
+      :p.cov==='t2'?'الختمة الثانية':'—';
     return `<a class="tile ${cls}${ss}" href="./page.html?p=${p.page}" style="${anim?`animation-delay:${(p.page*0.45)}ms`:''}"
       title="صفحة ${arNum(p.page)} — ${p.surah.ar} · ${st}"></a>`;
   }).join('');
