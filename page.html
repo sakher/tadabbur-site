@@ -69,7 +69,6 @@ function listen(blk){
     <div class="embed" data-src="${url}">
       <div class="embed-ph" role="button" tabindex="0" aria-label="تشغيل التدبّر">
         <div><div class="play">▶</div>
-        <div class="who">${presLink(blk)}</div>
         <div class="tm">${arNum(start)} → ${arNum(end)}</div></div>
       </div>
     </div>
@@ -126,20 +125,25 @@ function voices(blk){
   return `<div class="block"><div class="block-h"><span class="ic">⁙</span> أصواتٌ أخرى من المجلس <span class="muted" style="font-size:14px">(${arNum(t.others.length)})</span></div>
     <div class="voices">${cards}</div></div>`;
 }
-function reflection(blk){
-  if(!blk) return `<div class="card center muted">لم تُسجَّل هذه الصفحة في هذه السلسلة.</div>`;
-  const t=blk.tad;
-  if(!t||!t.has_tadabbur){
-    const body=blk.text?`<div class="tad-prose">${esc(blk.text)}</div>`:`<div class="card center muted">نصّ التدبّر لم يُعالَج بعد لهذه الصفحة.</div>`;
-    return `${blk.youtube_id?listen(blk):''}${body}`;
-  }
-  const [dc,dl]=confDot(t.confidence);
-  const head=`<div class="refl-head">
+function reflHead(blk){   // always-present identity bar: presenter · ayāt · date · confidence
+  const t=blk.tad||{};
+  if(blk.unnamed && !blk.youtube_id && !t.has_tadabbur) return '';
+  const [dc,dl]=confDot(blk.confidence||t.confidence);
+  return `<div class="refl-head">
       <span class="who">${presLink(blk)}</span>
       ${t.ayah_range?`<span class="aya">${arNum(t.ayah_range)}</span>`:''}
       ${blk.date?`<span class="role">· ${fmtDate(blk.date)}</span>`:''}
-      <span class="role" style="margin-inline-start:auto" title="ثقة المطابقة ${dl}"><span class="dot ${dc}"></span> ${dl}</span>
+      ${(blk.confidence||t.confidence)?`<span class="role" style="margin-inline-start:auto" title="ثقة المطابقة ${dl}"><span class="dot ${dc}"></span> ${dl}</span>`:''}
     </div>`;
+}
+function reflection(blk){
+  if(!blk) return `<div class="card center muted">لم تُسجَّل هذه الصفحة في هذه السلسلة.</div>`;
+  const t=blk.tad;
+  const head=reflHead(blk);
+  if(!t||!t.has_tadabbur){
+    const body=blk.text?`<div class="tad-prose">${esc(blk.text)}</div>`:`<div class="card center muted">نصّ التدبّر لم يُعالَج بعد لهذه الصفحة.</div>`;
+    return `${head}${blk.youtube_id?listen(blk):''}${body}`;
+  }
   const km=t.key_message?`<div class="keymsg"><div class="lbl">ما الذي يريده ربّي مني</div><div class="txt">${esc(t.key_message)}</div></div>`:'';
   const prose=`<div class="tad-prose">${proseHtml(t)}</div>`;
   return `${head}${km}${blk.youtube_id?listen(blk):''}${prose}${lessons(t)}${chips(t)}${voices(blk)}`;
