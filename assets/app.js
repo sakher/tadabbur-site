@@ -30,7 +30,8 @@ function chrome(active){
   document.body.insertAdjacentHTML('beforeend',`
    <footer class="ftr"><div class="wrap">
      <div><div class="ar">برنامج تدبّر القرآن الكريم</div>
-       <div>ختمة تدبّرية كاملة على مدى ست سنوات — صفحةً صفحة</div></div>
+       <div>ختمة تدبّرية كاملة على مدى ست سنوات — صفحةً صفحة</div>
+       <div style="margin-top:5px;opacity:.85">برعاية <a href="./about.html">مركز إتقان لتعليم القرآن · برادفورد</a></div></div>
      <div>المصدر: أرشيف الجلسات + بصمات الأصوات · <a href="./about.html">عن البيانات</a></div>
    </div></footer>`);
   $('#mbtn').onclick=()=>$('#nav').classList.toggle('open');

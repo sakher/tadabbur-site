@@ -118,7 +118,8 @@ function voices(blk){
   if(!t.others||!t.others.length) return '';
   const cards=t.others.map(o=>{
     const link=yid?`<a class="yt" href="${ytAt(yid,mmssToSec(o.start))}" target="_blank" rel="noopener">▶ يوتيوب · ${arNum(o.start||'')}</a>`:'';
-    return `<details class="voice"><summary><span class="who">${esc(o.by||'—')}</span>
+    const who=o.by_key?`<a class="who-link" href="./speaker.html?v=${encodeURIComponent(o.by_key)}" onclick="event.stopPropagation()">${esc(o.by||'—')}</a>`:esc(o.by||'—');
+    return `<details class="voice"><summary><span class="who">${who}</span>
         <span class="tm">${arNum(o.start||'')}${o.end?' → '+arNum(o.end):''}</span><span class="ar">▾</span></summary>
       <div class="voice-b">${linkify(o.point)}<br>${link}</div></details>`;
   }).join('');
