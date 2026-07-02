@@ -102,4 +102,11 @@ function linkify(text){
     `<a class="qref" href="https://quran.com/${su}/${ay}" target="_blank" rel="noopener">${arNum(su)}:${arNum(ay)}</a>`);
   return s;
 }
-function confDot(c){const v=+c||0; if(v>=.9)return['hi','عالية']; if(v>=.7)return['mid','متوسطة']; return['lo','مبدئية'];}
+function confDot(c){
+  const s=String(c||'').toLowerCase();
+  if(s==='high')return['hi','عالية'];
+  if(s==='substitute')return['hi','عالية (نائب)'];
+  if(s==='medium')return['mid','متوسطة'];
+  if(s==='manual-handoff'||s==='uncertain'||s==='low'||s==='unnamed-voice')return['lo','مبدئية'];
+  const v=+c||0; if(v>=.9)return['hi','عالية']; if(v>=.7)return['mid','متوسطة']; return['lo','مبدئية'];
+}
