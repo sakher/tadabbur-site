@@ -1,0 +1,67 @@
+{
+ "version": 1,
+ "built": "2026-07-03",
+ "schedule": {
+  "freq": "weekly",
+  "weekday": "friday",
+  "time": "19:30",
+  "tz": "Europe/London",
+  "duration_min": 80,
+  "secondary_tz": "Asia/Damascus",
+  "program": [
+   {
+    "t": "19:30",
+    "ar": "قراءة قرآن"
+   },
+   {
+    "t": "19:35",
+    "ar": "تقديم الصفحات"
+   },
+   {
+    "t": "19:40",
+    "ar": "تدبر المجموعات"
+   },
+   {
+    "t": "20:10",
+    "ar": "السنة النبوية"
+   },
+   {
+    "t": "20:20",
+    "ar": "مداخلات وأسئلة"
+   },
+   {
+    "t": "20:35",
+    "ar": "رسائل وعبر"
+   },
+   {
+    "t": "20:45",
+    "ar": "الدعاء"
+   }
+  ],
+  "pages_per_session": 3
+ },
+ "links": {
+  "zoom": {
+   "url": "https://us02web.zoom.us/j/6439514542",
+   "meeting_id": "643 951 4542",
+   "short": "https://bit.ly/3sOly5n"
+  },
+  "youtube_live": "https://www.youtube.com/@itqanuk/live",
+  "youtube_short": "https://bit.ly/39sL0pb",
+  "channel": "https://www.youtube.com/@itqanuk",
+  "site": "https://sakher.github.io/tadabbur-site/"
+ },
+ "series_active": "T2",
+ "last_session": {
+  "id": "T2-e102",
+  "date": "2026-06-27",
+  "session": 102,
+  "pages": [
+   304,
+   305,
+   306
+  ]
+ },
+ "next_override": null,
+ "notice": null
+}
